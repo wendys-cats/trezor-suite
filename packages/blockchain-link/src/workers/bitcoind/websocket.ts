@@ -2,13 +2,8 @@ import WebSocket from 'ws';
 import { EventEmitter } from 'events';
 import { CustomError } from '../../constants/errors';
 import { create as createDeferred, Deferred } from '../../utils/deferred';
-import {
-    AccountInfoParams,
-    EstimateFeeParams,
-    BlockNotification,
-    AddressNotification,
-    Send,
-} from '../../types/blockbook';
+import { BlockNotification, AddressNotification, Send } from '../../types/blockbook';
+import { AccountInfoParams, EstimateFeeParams } from '../../types/messages';
 
 const NOT_INITIALIZED = new CustomError('websocket_not_initialized');
 
