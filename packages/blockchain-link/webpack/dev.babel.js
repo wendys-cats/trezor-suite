@@ -26,7 +26,16 @@ module.exports = {
     module: {
         rules: [
             {
-                test: [/ripple\/index.ts$/, /blockbook\/index.ts$/, /bitcoind\/index.ts$/],
+                test: [/bitcoind\/index.ts$/],
+                use: [{
+                    loader: 'worker-loader',
+                    options: {
+                        name: 'bitcoind.worker.js',
+                    }
+                }],
+            },
+            {
+                test: [/ripple\/index.ts$/, /blockbook\/index.ts$/],
                 use: ['worker-loader'],
             },
             {
