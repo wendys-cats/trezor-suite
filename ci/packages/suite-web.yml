@@ -51,6 +51,7 @@ suite-web e2e chrome stage=stable:
             - /builds/satoshilabs/trezor/trezor-suite/packages/integration-tests/projects/suite-web/snapshots
             - /builds/satoshilabs/trezor/trezor-suite/packages/integration-tests/projects/suite-web/screenshots
             - /builds/satoshilabs/trezor/trezor-suite/packages/integration-tests/projects/suite-web/videos
+            - /builds/satoshilabs/trezor/trezor-suite/packages/integration-tests/projects/suite-web/coverage
     dependencies: []
 
 # this job is intended to collect statistics on tests in beta stage (=tests that are possibly unstable)
@@ -78,6 +79,7 @@ suite-web e2e chrome stage=beta:
             - /builds/satoshilabs/trezor/trezor-suite/packages/integration-tests/projects/suite-web/snapshots
             - /builds/satoshilabs/trezor/trezor-suite/packages/integration-tests/projects/suite-web/screenshots
             - /builds/satoshilabs/trezor/trezor-suite/packages/integration-tests/projects/suite-web/videos
+            - /builds/satoshilabs/trezor/trezor-suite/packages/integration-tests/projects/suite-web/coverage
     dependencies: []
 
 suite-web e2e chrome-beta stage=stable:

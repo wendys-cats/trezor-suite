@@ -1,7 +1,9 @@
 module.exports = api => {
     // The cache only affects in-memory configuration. If you've restarted the process, it'll always call the function at least once.
     api.cache(true);
+    console.log('using babel.config =============');
     const plugins = [
+        'istanbul',
         [
             'module-resolver',
             {

@@ -12,7 +12,7 @@ const CONSTANTS = require('../constants');
 
 const controller = new Controller({ url: 'ws://localhost:9001/' });
 
-module.exports = on => {
+module.exports = (on, config) => {
     // make ts possible start
     const options = {
         // send in the options from your webpack.config.js, so it works the same
@@ -21,6 +21,9 @@ module.exports = on => {
         webpackOptions: require('../webpack.config'),
         watchOptions: {},
     };
+
+    require('@cypress/code-coverage/task')(on, config)
+  
     on('file:preprocessor', webpack(options));
     // make ts possible end
 
@@ -154,4 +157,6 @@ module.exports = on => {
             return null;
         },
     });
+    
+    return config;
 };

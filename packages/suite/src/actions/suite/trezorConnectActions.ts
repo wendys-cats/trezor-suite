@@ -67,7 +67,7 @@ export const init = () => async (dispatch: Dispatch, getState: GetState) => {
             process.env.SUITE_TYPE === 'desktop'
                 ? resolveStaticPath('connect/')
                 : 'https://connect.corp.sldev.cz/develop/';
-        // 'https://localhost:8088/';
+        // : 'https://localhost:8088/';
         // 'https://connect.corp.sldev.cz/develop/';
 
         await TrezorConnect.init({
