@@ -8679,12 +8679,25 @@ bs-logger@0.x:
   dependencies:
     fast-json-stable-stringify "2.x"
 
+bs58@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/bs58/-/bs58-2.0.1.tgz#55908d58f1982aba2008fa1bed8f91998a29bf8d"
+  integrity sha1-VZCNWPGYKrogCPob7Y+RmYopv40=
+
 bs58@^4.0.0:
   version "4.0.1"
   resolved "https://registry.yarnpkg.com/bs58/-/bs58-4.0.1.tgz#be161e76c354f6f788ae4071f63f34e8c4f0a42a"
   integrity sha1-vhYedsNU9veIrkBx9j806MTwpCo=
   dependencies:
     base-x "^3.0.2"
+
+bs58check@1.0.5:
+  version "1.0.5"
+  resolved "https://registry.yarnpkg.com/bs58check/-/bs58check-1.0.5.tgz#7cc78b464f0ab41612f1fb6fea2b159e1a5df430"
+  integrity sha1-fMeLRk8KtBYS8ftv6isVnhpd9DA=
+  dependencies:
+    bs58 "^2.0.1"
+    create-hash "^1.1.0"
 
 bs58check@<3.0.0, bs58check@^2.0.0, bs58check@^2.1.2:
   version "2.1.2"
