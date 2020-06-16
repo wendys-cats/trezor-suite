@@ -10,7 +10,9 @@ const webpack = require('@cypress/webpack-preprocessor');
 const { Controller } = require('./websocket-client');
 const CONSTANTS = require('../constants');
 
-const controller = new Controller({ url: 'ws://localhost:9001/' });
+// const localhostUrl = process.env.DOCKER_NETWORK_URL || 'localhost'; 
+// const controller = new Controller({ url: `ws://${localhostUrl}:9001/` });
+const controller = new Controller({ url: `ws://172.16.1.4:9001/` });
 
 module.exports = on => {
     // make ts possible start

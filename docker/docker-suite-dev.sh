@@ -8,6 +8,7 @@
 
 xhost +
 
+export DOCKER_NETWORK_URL='172.18.0.1'
 export LOCAL_USER_ID=`id -u $USER`
 docker-compose -f ./docker/docker-compose.suite-dev.yml up --build --remove-orphans -d
 
