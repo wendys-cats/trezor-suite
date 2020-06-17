@@ -1,4 +1,4 @@
-suite-web build:
+.suite-web build:
     stage: build
     script:
         - assetPrefix=/suite-web/${CI_BUILD_REF_NAME}/wallet yarn workspace @trezor/suite-web build
@@ -7,7 +7,7 @@ suite-web build:
         paths:
             - packages/suite-web/build
 
-suite-web deploy dev:
+.suite-web deploy dev:
     stage: deploy to dev servers
     variables:
         DEPLOY_DIRECTORY: ${DEPLOY_BASE_DIR}/suite-web/${CI_BUILD_REF_NAME}/wallet
@@ -38,12 +38,15 @@ suite-web e2e chrome stage=stable:
         - export TRACK_SUITE_URL=https://track-suite.herokuapp.com
         - export CYPRESS_baseUrl=${DEV_SERVER_URL}/suite-web/${CI_BUILD_REF_NAME}
         - export BROWSER=chrome
-        - yarn concurrently --success first --kill-others 
-          "cd ./docker/trezor-user-env/controller && python3 ./main.py"
-          "node ./packages/integration-tests/projects/suite-web/run_tests.js
-          --project ./packages/integration-tests/projects/suite-web
-          --stage='@stable'
-          "
+        - docker --version
+        - docker-compose --version
+        # - ./docker/docker-suite-test.sh
+        # - yarn concurrently --success first --kill-others 
+        #   "cd ./docker/trezor-user-env/controller && python3 ./main.py"
+        #   "node ./packages/integration-tests/projects/suite-web/run_tests.js
+        #   --project ./packages/integration-tests/projects/suite-web
+        #   --stage='@stable'
+        #   "
     artifacts:
         expire_in: 7 days
         when: always
@@ -56,7 +59,7 @@ suite-web e2e chrome stage=stable:
 # this job is intended to collect statistics on tests in beta stage (=tests that are possibly unstable)
 # failing test here does not make job fail, run_tests script with --stage='@beta' exits with non-zero
 # code only when there is some runtime error
-suite-web e2e chrome stage=beta:
+.suite-web e2e chrome stage=beta:
     stage: integration testing
     script:
         - npx cypress install
@@ -80,7 +83,7 @@ suite-web e2e chrome stage=beta:
             - /builds/satoshilabs/trezor/trezor-suite/packages/integration-tests/projects/suite-web/videos
     dependencies: []
 
-suite-web e2e chrome-beta stage=stable:
+.suite-web e2e chrome-beta stage=stable:
     stage: integration testing
     only:	
         - schedules
@@ -110,14 +113,14 @@ suite-web e2e chrome-beta stage=stable:
     dependencies: []
 
 # todo: not sure if this is relevant, could be removed and replaced with lighthouse in near (hopefully) future
-suite-web test security:
+.suite-web test security:
     stage: misc
     only:
         - schedules
     script: yarn is-website-vulnerable ${DEV_SERVER_URL}/suite-web/${CI_BUILD_REF_NAME} | node ./ci/scripts/check-vulnerabilities.js
     dependencies: []
 
-suite-web deploy staging:
+.suite-web deploy staging:
     stage: deploy to staging
     environment:
         name: ${CI_BUILD_REF_NAME}-staging
