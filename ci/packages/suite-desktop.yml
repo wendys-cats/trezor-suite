@@ -18,7 +18,7 @@ suite-desktop build linux:
         - yarn workspace @trezor/suite-desktop build:linux
         - mv packages/suite-desktop/build-electron/"${DESKTOP_APP_NAME}"-*.AppImage .
     artifacts:
-        expire_in: 1 day
+        expire_in: 1 week
         paths:
             - ${DESKTOP_APP_NAME}-*.AppImage
 
@@ -31,7 +31,7 @@ suite-desktop build windows:
         - yarn workspace @trezor/suite-desktop build:win
         - mv packages/suite-desktop/build-electron/"${DESKTOP_APP_NAME}"-*.exe .
     artifacts:
-        expire_in: 1 day
+        expire_in: 1 week
         paths:
             - ${DESKTOP_APP_NAME}-*.exe
 
