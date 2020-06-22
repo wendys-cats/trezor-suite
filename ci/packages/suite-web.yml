@@ -140,7 +140,7 @@ suite-web deploy staging:
     before_script: []
     when: manual
     script:
-        - source $STAGING_DEPLOY_KEYFILE
+        - source ${STAGING_DEPLOY_KEYFILE}
         - cd packages/suite-web
         - mkdir -p packages/suite-web/build/static/desktop
         - cp ${DESKTOP_APP_NAME}-*.zip packages/suite-web/build/static/desktop
