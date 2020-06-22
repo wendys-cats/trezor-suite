@@ -133,7 +133,7 @@ suite-web deploy staging:
         - suite-web build-staging
         - suite-desktop build mac
         - suite-desktop build linux
-        - suite-desktop build win
+        - suite-desktop build windows
     environment:
         name: ${CI_BUILD_REF_NAME}-staging
         url: ${STAGING_SERVER_URL}
