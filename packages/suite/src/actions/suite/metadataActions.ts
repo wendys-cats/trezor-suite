@@ -12,7 +12,9 @@ import {
 import { Account } from '@wallet-types';
 import * as metadataUtils from '@suite-utils/metadata';
 import * as modalActions from '@suite-actions/modalActions';
+import * as notificationActions from '@suite-actions/notificationActions';
 import DropboxProvider from '@suite/services/metadata/DropboxProvider';
+import GoogleProvider from '@suite/services/metadata/GoogleProvider';
 
 export type MetadataActions =
     | { type: typeof METADATA.ENABLE; payload: boolean }
@@ -44,6 +46,9 @@ const getProvider = async (state?: Partial<MetadataProviderCredentials>) => {
         case 'dropbox':
             providerInstance = new DropboxProvider(state.token);
             break;
+        case 'google':
+            providerInstance = new GoogleProvider(state.token);
+            break;
         default:
             break;
     }
@@ -63,6 +68,7 @@ export const addDeviceMetadata = (
     payload: Extract<MetadataAddPayload, { type: 'walletLabel' }>,
 ) => async (dispatch: Dispatch, getState: GetState) => {
     const provider = await getProvider(getState().metadata.provider);
+    // todo: nemam master key, ale canceled
     if (!provider) return;
     const device = getState().devices.find(d => d.state === payload.deviceState);
     if (!device || device.metadata.status !== 'enabled') return;
@@ -93,6 +99,13 @@ export const addAccountMetadata = (payload: MetadataAddPayload) => async (
     dispatch: Dispatch,
     getState: GetState,
 ) => {
+    // todo: pokryt case kdyz user da cancel na enable labeling a pak chce pridat metadata
+    // todo: v tom pripade je device.metadata.status !== 'cancelled'
+    // todo: 1. dispatch(getDeviceMetadataKey(true));
+    // todo: 2. dodat account keys (setAccountMetadataKey)
+    // todo: 3. fetchnout vsechny soubory z provideru a teprve pak jit dal (fetchMetadata)
+    // return;
+
     if (payload.type === 'walletLabel') {
         dispatch(addDeviceMetadata(payload));
         return;
@@ -199,6 +212,7 @@ export const setAccountMetadataKey = (account: Account) => (
 };
 
 // Generate device master-key
+// todo: maybe rename to "initMetadata ?"
 export const getDeviceMetadataKey = (force = false) => async (
     dispatch: Dispatch,
     getState: GetState,
@@ -281,6 +295,7 @@ export const getDeviceMetadataKey = (force = false) => async (
 };
 
 export const connectProvider = (type: MetadataProviderType) => async (dispatch: Dispatch) => {
+    console.log('metadataActions connectProvider', type);
     const provider = await getProvider({ type });
     if (!provider) return;
 
@@ -288,7 +303,14 @@ export const connectProvider = (type: MetadataProviderType) => async (dispatch: 
 
     if (connected) {
         const credentials = await provider.getCredentials();
-        if (!credentials) return; // TODO: toast errors
+        if (!credentials) {
+            return dispatch(
+                notificationActions.addToast({
+                    type: 'error',
+                    error: 'Failed to log in metadata provider',
+                }),
+            );
+        }
 
         // set metadata reducer
         dispatch({
