@@ -12,14 +12,12 @@ const Wrapper = styled.div`
     overflow: hidden;
     height: 62px;
     flex-direction: column;
-
-    border: 1px solid red;
 `;
 
 const Dot = styled.div<{ isActive?: boolean }>`
     width: ${DOT_WIDTH}px;
     height: ${DOT_WIDTH}px;
-    background: lime;
+    background: red;
     border-radius: 100%;
     margin-right: ${DOT_SPACE}px;
 
@@ -42,7 +40,10 @@ const Arrow = styled.div`
     cursor: pointer;
 `;
 
-const Controls = styled.div``;
+const Controls = styled.div`
+    display: flex;
+    justify-content: space-between;
+`;
 
 interface Props {
     steps?: number;
@@ -55,6 +56,7 @@ const isActive = (i: number, activeStep?: number) => false;
 const DotSlider = ({ steps, activeStep, visibleDots = 5 }: Props) => {
     const dotAndSpace = DOT_WIDTH + DOT_SPACE;
     const [marginLeft, setMarginLeft] = useState<number>(0);
+    const [marginRight, setMarginRight] = useState<number>(0);
 
     const props = useSpring({
         to: { marginLeft },
@@ -71,8 +73,8 @@ const DotSlider = ({ steps, activeStep, visibleDots = 5 }: Props) => {
             </animated.div>
             <Controls>
                 <Arrow onClick={() => setMarginLeft(marginLeft - dotAndSpace)}>left</Arrow>
-                <Arrow onClick={() => setMarginLeft(marginLeft + dotAndSpace)}>right</Arrow>
                 <Arrow onClick={() => setMarginLeft(0)}>reset</Arrow>
+                <Arrow onClick={() => setMarginLeft(marginLeft + dotAndSpace)}>right</Arrow>
             </Controls>
         </Wrapper>
     );
