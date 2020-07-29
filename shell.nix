@@ -5,6 +5,7 @@ stdenv.mkDerivation {
   buildInputs = [
     nodejs-12_x
     (yarn.override { nodejs = nodejs-12_x; })
+    cypress
   ];
   shellHook = ''
     export PATH="$PATH:$(pwd)/node_modules/.bin"
