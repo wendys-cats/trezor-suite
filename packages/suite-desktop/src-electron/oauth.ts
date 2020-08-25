@@ -1,4 +1,4 @@
-import { BrowserWindow } from 'electron';
+import { BrowserWindow, ipcMain} from 'electron';
 import * as path from 'path';
 
 export const openOauthPopup = (url: string) => {
@@ -20,4 +20,7 @@ export const openOauthPopup = (url: string) => {
     popup.once('ready-to-show', () => {
         popup.show();
     });
+
+    return popup;
+
 };

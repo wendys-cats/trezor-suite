@@ -2,6 +2,7 @@ import { Dropbox } from 'dropbox';
 import { AbstractMetadataProvider } from '@suite-types/metadata';
 import { getMetadataOauthToken, getOauthReceiverUrl } from '@suite-utils/oauth';
 import { METADATA } from '@suite-actions/constants';
+import { getRandomId } from '@suite-utils/random';
 
 class DropboxProvider implements AbstractMetadataProvider {
     client: Dropbox;
@@ -10,19 +11,42 @@ class DropboxProvider implements AbstractMetadataProvider {
     type: 'dropbox';
 
     constructor(token?: string) {
-        this.client = new Dropbox({ clientId: METADATA.DROPBOX_CLIENT_ID, fetch });
+        this.client = new Dropbox({ clientId: METADATA.DROPBOX_CLIENT_ID });
         if (token) {
-            this.client.setAccessToken(token);
+            // this.client.setAccessToken(token);
+            this.client.setRefreshToken(token);
         }
         this.type = 'dropbox';
     }
 
     async connect() {
-        const url = this.client.getAuthenticationUrl(getOauthReceiverUrl(), 'TODO:RandomToken');
+        const redirectUrl = await getOauthReceiverUrl();
 
-        const token = await getMetadataOauthToken(url);
+        if (!redirectUrl) return false;
 
-        this.client.setAccessToken(token);
+        const url = this.client.getAuthenticationUrl(
+            redirectUrl,
+            getRandomId(10),
+            'code',
+            'offline',
+            undefined,
+            "none",
+            true,
+        );
+
+        const response = await getMetadataOauthToken(url);
+
+        console.log('response', response);
+
+        if (!response.code) return false;
+        try {
+            const accessToken = await this.client.getAccessTokenFromCode(response.code, redirectUrl);
+            console.log('accessToken', accessToken);
+            this.client.setAccessToken(accessToken);
+        } catch (err) {
+            console.log('err', err);
+        }
+        
         this.connected = true;
         return true;
     }
@@ -67,10 +91,11 @@ class DropboxProvider implements AbstractMetadataProvider {
     }
 
     async getCredentials() {
+        if (!this.client.getRefreshToken()) return;
         const account = await this.client.usersGetCurrentAccount();
         return {
             type: 'dropbox',
-            token: this.client.getAccessToken(),
+            token: this.client.getRefreshToken(),
             user: account.name.given_name,
         } as const;
     }

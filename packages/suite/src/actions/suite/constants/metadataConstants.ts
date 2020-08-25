@@ -27,9 +27,15 @@ export const AUTH_WINDOW_HEIGHT = 720;
 export const AUTH_WINDOW_PROPS = `width=${AUTH_WINDOW_WIDTH},height=${AUTH_WINDOW_HEIGHT},dialog=yes,dependent=yes,scrollbars=yes,location=yes`;
 
 // todo: provide real client ids; these are for testing;
+// export const GOOGLE_CLIENT_ID =
+//     '842348096891-efhc485636d5t09klvrve0pi4njhq3l8.apps.googleusercontent.com';
 export const GOOGLE_CLIENT_ID =
-    '842348096891-efhc485636d5t09klvrve0pi4njhq3l8.apps.googleusercontent.com';
+    '842348096891-s10c39phiun6odvvshh23inh755t38ec.apps.googleusercontent.com'; // iOS experiment
+// export const GOOGLE_CLIENT_ID =
+//     '842348096891-gkc2bo8e245p11ijd3ufb5fg43qgua1i.apps.googleusercontent.com'; // desktop experiment;
+
 // google client id from trezor-password-manager 296429812941-co5alkvv0tan1ptun23ilefh96gb1heb.apps.googleusercontent.com
+
 export const DROPBOX_CLIENT_ID = 'g5f5vaogrxvvrnv';
 // dropbox client id from mytrezor wg0yz2pbgjyhoda
 // dropbox client id from trezor-password-manager s340kh3l0vla1nv

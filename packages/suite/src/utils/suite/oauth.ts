@@ -1,27 +1,40 @@
 import { getPrefixedURL } from '@suite-utils/router';
 import { METADATA } from '@suite-actions/constants';
 import { Deferred, createDeferred } from '@suite-utils/deferred';
-import { urlHashParams } from '@suite-utils/metadata';
+import { urlHashParams, urlSearchParams } from '@suite-utils/metadata';
 /**
  * For desktop, always use oauth_receiver.html from trezor.io
  * For web, use oauth_receiver.html hosted on the same origin (localhost/sldev/trezor.io)
  */
-export const getOauthReceiverUrl = () => {
+export const getOauthReceiverUrl = (): Promise<string> | string => {
     // @ts-ignore
     if (!window.ipcRenderer) {
         return `${window.location.origin}${getPrefixedURL('/static/oauth/oauth_receiver.html')}`;
     }
 
-    // todo: upload oauth_receiver.html from suite to trezor.io (it contains code to handle ipcRenderer);
-    // return 'https://beta-wallet.trezor.io/oauth_receiver.html';
-    // todo: temporarily herokuapp is used.
-    return 'https://track-suite.herokuapp.com/oauth/';
+    // for desktop
+    // start ouath-receiver http service and wait for address
+    return new Promise((resolve, reject) => {
+        // @ts-ignore
+        ipcRenderer.send('oauth-receiver-start');
+        // @ts-ignore
+        ipcRenderer.on('oauth-receiver-address', (_sender: any, message: string) => {
+            console.log('data in javascript', message);
+            if (message) {
+                return resolve(message);
+            }
+            return reject(new Error('no response'));
+        });
+    });
 };
 
+type Params = { [param: string]: string };
+
 export const getMetadataOauthToken = (url: string) => {
+    console.log('getMetadataOauthToken', url);
     const originalParams = urlHashParams(url);
 
-    const dfd: Deferred<string> = createDeferred();
+    const dfd: Deferred<Params> = createDeferred();
 
     const props = METADATA.AUTH_WINDOW_PROPS;
 
@@ -40,16 +53,23 @@ export const getMetadataOauthToken = (url: string) => {
 
         if (typeof e.data !== 'string') return;
 
-        const params = urlHashParams(e.data);
+        let params: Params;
 
-        if (params.state !== originalParams.state) {
+        if (e.data.startsWith('#')) {
+            params = urlHashParams(e.data);
+        } else {
+            params = urlSearchParams(e.data);
+        }
+
+        console.log('params', params);
+
+        if (originalParams.state && params.state !== originalParams.state) {
             return;
         }
 
-        const token = params.access_token;
 
-        if (token) {
-            dfd.resolve(token);
+        if (params) {
+            dfd.resolve(params);
         } else {
             dfd.reject(new Error('Cancelled'));
         }
@@ -58,11 +78,21 @@ export const getMetadataOauthToken = (url: string) => {
     // @ts-ignore
     const { ipcRenderer } = global;
     if (ipcRenderer) {
-        const onIpcMessage = (_sender: any, message: any) => {
-            onMessage({ ...message, origin: 'herokuapp.com' });
-            ipcRenderer.off('oauth', onIpcMessage);
-        };
-        ipcRenderer.on('oauth', onIpcMessage);
+        // const onIpcMessage = (_sender: any, message: any) => {
+        //     onMessage({ ...message, origin: 'herokuapp.com' });
+        //     ipcRenderer.off('oauth', onIpcMessage);
+        // };
+        // ipcRenderer.on('oauth', onIpcMessage);
+
+        ipcRenderer.on(
+            'oauth-receiver-response',
+            (_sender: any, message: { [key: string]: string }) => {
+                console.log('oauth-receiver-response', message);
+                if (message && message.code) {
+                    dfd.resolve(message);
+                }
+            },
+        );
     } else {
         window.addEventListener('message', onMessage);
     }

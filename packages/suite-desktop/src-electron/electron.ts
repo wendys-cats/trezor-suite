@@ -1,4 +1,4 @@
-import { app, session, BrowserWindow, ipcMain, shell, Menu } from 'electron';
+import { app, session, BrowserWindow, ipcMain, shell, Menu, ipcRenderer } from 'electron';
 import isDev from 'electron-is-dev';
 import prepareNext from 'electron-next';
 import * as path from 'path';
@@ -9,6 +9,8 @@ import { runBridgeProcess } from './bridge';
 import { buildMainMenu } from './menu';
 import { openOauthPopup } from './oauth';
 import * as metadata from './metadata';
+import * as http from 'http';
+import { parse } from '@babel/core';
 
 let mainWindow: BrowserWindow;
 const APP_NAME = 'Trezor Beta Wallet';
@@ -45,6 +47,8 @@ const registerShortcuts = (window: BrowserWindow) => {
     });
 };
 
+let oauthPopup;
+
 const init = async () => {
     metadata.init();
     try {
@@ -75,7 +79,8 @@ const init = async () => {
     });
 
     Menu.setApplicationMenu(buildMainMenu());
-    mainWindow.setMenuBarVisibility(false);
+
+    // mainWindow.setMenuBarVisibility(false);
 
     if (process.platform === 'darwin') {
         // On OS X it is common for applications and their menu bar
@@ -87,21 +92,24 @@ const init = async () => {
     }
 
     // open external links in default browser
-    const handleExternalLink = (event: Event, url: string) => {
+    const handleExternalLink = (event: Event, uri: string) => {
+        console.log('ext uri', uri);
+
         const oauthUrls = [
             'https://accounts.google.com',
             'https://www.dropbox.com/oauth2/authorize',
         ];
-        if (oauthUrls.some(url => url.startsWith(url))) {
+        if (oauthUrls.some(ou => uri.startsWith(ou))) {
+            console.log('in here mnau');
             event.preventDefault();
-            openOauthPopup(url);
+            oauthPopup = openOauthPopup(uri);
             return;
         }
 
         // TODO? url.startsWith('http:') || url.startsWith('https:');
-        if (url !== mainWindow.webContents.getURL()) {
+        if (uri !== mainWindow.webContents.getURL()) {
             event.preventDefault();
-            shell.openExternal(url);
+            shell.openExternal(uri);
         }
     };
 
@@ -208,3 +216,31 @@ ipcMain.on('restart-app', () => {
 ipcMain.on('oauth-receiver', (_event, message) => {
     mainWindow.webContents.send('oauth', { data: message });
 });
+
+ipcMain.on('oauth-receiver-start', () => {
+    let oauthReceiver = http.createServer((req, res) => {
+        var parsedUrl = url.parse(req.url, true);
+        console.log('parsed', parsedUrl);
+
+        mainWindow.webContents.send('oauth-receiver-response', parsedUrl.query);
+        oauthPopup.close();
+        // Set a response type of plain text for the response
+        // res.writeHead(200, { 'Content-Type': 'text/plain' });
+
+        // Send back a response and end the connection
+        // res.end('Hello World!\n');
+        // res
+    });
+
+    // Start the server on port 3000
+    oauthReceiver.listen(0, '127.0.0.1', undefined, () => {
+        const address = oauthReceiver.address();
+        console.log('address', address);
+        console.log('Node server running on', address);
+
+        //@ts-ignore
+        mainWindow.webContents.send('oauth-receiver-address', `http://${address.address}:${address.port}`);
+    });
+});
+
+// ipcMain.on('')

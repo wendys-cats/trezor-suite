@@ -1,14 +1,20 @@
 /* eslint no-throw-literal: 0 */
+/* eslint @typescript-eslint/camelcase: 0 */
 
-import { getMetadataOauthToken, getOauthReceiverUrl } from '@suite-utils/oauth';
-import { getRandomId } from '@suite-utils/random';
+/**
+ * Reason why this file exists:
+ * at the begging I did not like googleapis package (official from google) as it does not have browser support
+ * but later I found out that it was possible to use google-auth-library, also official google package
+ * which is also a part of googleapis only by little tweaking in webpack config. So, it might be possible (haven't tried yet)
+ * to do the same with googleapis package
+ */
+
+import { OAuth2Client } from 'google-auth-library';
 import { METADATA } from '@suite-actions/constants';
+import { getMetadataOauthToken, getOauthReceiverUrl } from '@suite-utils/oauth';
 
 const SCOPES = 'https://www.googleapis.com/auth/drive.appdata';
 const BOUNDARY = '-------314159265358979323846';
-
-// todos:
-// use state in oauth https://developers.google.com/identity/protocols/oauth2/javascript-implicit-flow#request-parameter-state
 
 type QueryParams = {
     q?: string;
@@ -83,32 +89,48 @@ class Client {
     token?: string;
     nameIdMap: Record<string, string>;
     listPromise?: Promise<ListResponse>;
+    oauth2Client: OAuth2Client;
 
     constructor(token?: string) {
         this.token = token;
         this.nameIdMap = {};
+        this.oauth2Client = new OAuth2Client({
+            clientId: METADATA.GOOGLE_CLIENT_ID,
+        });
+        this.oauth2Client.on('tokens', tokens => {
+            if (tokens.refresh_token) {
+                this.token = tokens.refresh_token;
+            }
+        });
+        if (token) {
+            this.oauth2Client.setCredentials({
+                // set only refresh_token, which is stored in long term storage. oauth2Client will
+                // exchange it for access_token and store it for subsequent calls.
+                refresh_token: token,
+            });
+        }
     }
 
     async authorize() {
-        // eslint-disable-next-line
-        const redirect_uri = getOauthReceiverUrl();
-        const url = new URL('https://accounts.google.com/o/oauth2/v2/auth');
-        url.search = new URLSearchParams({
-            // eslint-disable-next-line
-            client_id: METADATA.GOOGLE_CLIENT_ID,
-            scope: SCOPES,
-            // eslint-disable-next-line
-            include_granted_scopes: 'true',
-            // eslint-disable-next-line
-            response_type: 'token',
-            // todo: add state!!
-            state: getRandomId(30),
-            // eslint-disable-next-line
-            redirect_uri,
-        }).toString();
+        const redirectUri = await getOauthReceiverUrl();
+        console.log('redirect uri received from ', redirectUri);
+        if (!redirectUri) return;
 
-        const token = await getMetadataOauthToken(String(url));
-        this.token = token;
+        const url = this.oauth2Client.generateAuthUrl({
+            access_type: 'offline',
+            scope: SCOPES,
+            redirect_uri: redirectUri as string,
+        });
+
+        const params = await getMetadataOauthToken(url);
+
+        // code is retrieved and exchanged for access_token and refresh_token
+        const { tokens } = await this.oauth2Client.getToken({
+            code: params.code,
+            redirect_uri: redirectUri as string,
+        });
+
+        this.oauth2Client.setCredentials(tokens);
     }
 
     /**
@@ -125,7 +147,6 @@ class Client {
     async getTokenInfo(): Promise<GetTokenInfoResponse> {
         const response = await this.call(
             `https://www.googleapis.com/drive/v3/about?fields=user&access_token=${this.token}`,
-            // `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${this.token}`,
             { method: 'GET' },
             {},
         );
@@ -263,12 +284,17 @@ class Client {
             const query = new URLSearchParams(apiParams.query as Record<string, string>).toString();
             url += `?${query}`;
         }
+        const accessToken = await this.oauth2Client.getAccessToken();
+
+        if (!accessToken || !accessToken.token) {
+            throw { error: 'no access_token provided' };
+        }
 
         const fetchOptions = {
             ...fetchParams,
             headers: {
                 'Content-Type': 'application/json',
-                Authorization: `Bearer ${this.token}`,
+                Authorization: `Bearer ${accessToken.token}`,
                 ...fetchParams.headers,
             },
         };

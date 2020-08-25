@@ -25,6 +25,7 @@ module.exports = withBundleAnalyzer(
                     inlineImageLimit: 0,
                     babelConfigFile: path.resolve('babel.config.js'),
                     // https://github.com/zeit/next.js/issues/6219
+                    
                     // target: 'serverless',
                     transpileModules: [
                         '@trezor',
@@ -51,6 +52,13 @@ module.exports = withBundleAnalyzer(
                                 ),
                             }),
                         );
+                        // google-auth-library dependency does not have out-of-the-box browser support (is primarily aimed at nodejs)
+                        // so we need to do this to make it work (at the time of writing this)
+                        config.node.fs = 'empty';
+                        config.node.child_process = 'empty';
+                        config.node.net = 'empty';
+                        config.node.tls = 'empty';
+
                         return config;
                     },
                 }),
