@@ -5,7 +5,7 @@
         - yarn workspace @trezor/suite-data copy-static-files
         - yarn workspace @trezor/suite-desktop build:${platform}
         - ls -la packages/suite-desktop/build-electron
-        - mv packages/suite-desktop/build-electron/${platform}/* .
+        - mv packages/suite-desktop/build-electron/* .
     artifacts:
         paths:
             - ${artifact}
