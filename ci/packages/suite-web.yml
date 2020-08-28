@@ -153,7 +153,7 @@ suite-web deploy dev:
 suite-web deploy staging:
     stage: deploy to staging
     dependencies:
-        - suite-web build-staging
+        - suite-web build-staging manual
         - suite-desktop build mac manual
         - suite-desktop build linux manual
         - suite-desktop build windows manual
