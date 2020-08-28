@@ -4,11 +4,11 @@
         - yarn cache clean
         - yarn workspace @trezor/suite-data copy-static-files
         - yarn workspace @trezor/suite-desktop build:${platform}
+        - ls -la packages/suite-desktop/
         - ls -la packages/suite-desktop/build-electron
-        - mv packages/suite-desktop/build-electron/* .
     artifacts:
         paths:
-            - ${artifact}
+            - "packages/suite-desktop/build-electron/"
         expire_in: 1 days
 
 .auto_run_branches: &auto_run_branches
