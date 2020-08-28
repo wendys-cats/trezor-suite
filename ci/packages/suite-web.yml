@@ -77,86 +77,86 @@ suite-web deploy dev:
     tags:
         - deploy
 
-suite-web e2e chrome stage=stable/suite:
-    stage: integration testing
-    variables:
-        TEST_GROUP: "@stable/suite"
-    script:
-        - *e2e_script_common
-        - export CYPRESS_SNAPSHOT=1
-        - export BROWSER=chrome
-        - 'eval $TEST_CMD'
-    artifacts:
-        <<: *e2e_artifacts
-    dependencies: []
+# suite-web e2e chrome stage=stable/suite:
+#     stage: integration testing
+#     variables:
+#         TEST_GROUP: "@stable/suite"
+#     script:
+#         - *e2e_script_common
+#         - export CYPRESS_SNAPSHOT=1
+#         - export BROWSER=chrome
+#         - 'eval $TEST_CMD'
+#     artifacts:
+#         <<: *e2e_artifacts
+#     dependencies: []
 
-suite-web e2e chrome stage=stable/metadata:
-    stage: integration testing
-    variables:
-        TEST_GROUP: "@stable/metadata"
-    script:
-        - *e2e_script_common
-        - export CYPRESS_SNAPSHOT=1
-        - export BROWSER=chrome
-        - 'eval $TEST_CMD'
-    artifacts:
-        <<: *e2e_artifacts
-    dependencies: []
+# suite-web e2e chrome stage=stable/metadata:
+#     stage: integration testing
+#     variables:
+#         TEST_GROUP: "@stable/metadata"
+#     script:
+#         - *e2e_script_common
+#         - export CYPRESS_SNAPSHOT=1
+#         - export BROWSER=chrome
+#         - 'eval $TEST_CMD'
+#     artifacts:
+#         <<: *e2e_artifacts
+#     dependencies: []
 
-suite-web e2e chrome stage=stable/device-management:
-    stage: integration testing
-    variables:
-        TEST_GROUP: "@stable/device-management"
-    script:
-        - *e2e_script_common
-        - export CYPRESS_SNAPSHOT=1
-        - export BROWSER=chrome
-        - 'eval $TEST_CMD'
-    artifacts:
-        <<: *e2e_artifacts
-    dependencies: []
+# suite-web e2e chrome stage=stable/device-management:
+#     stage: integration testing
+#     variables:
+#         TEST_GROUP: "@stable/device-management"
+#     script:
+#         - *e2e_script_common
+#         - export CYPRESS_SNAPSHOT=1
+#         - export BROWSER=chrome
+#         - 'eval $TEST_CMD'
+#     artifacts:
+#         <<: *e2e_artifacts
+#     dependencies: []
 
-# this job is intended to collect statistics on tests in beta stage (=tests that are possibly unstable)
-# failing test here does not make job fail, run_tests script with --stage='@beta' exits with non-zero
-# code only when there is some runtime error
-suite-web e2e chrome stage=beta:
-    stage: integration testing
-    variables:
-        TEST_GROUP: "@beta"
-    script:
-        - *e2e_script_common
-        - export CYPRESS_SNAPSHOT=1
-        - export BROWSER=chrome
-        - 'eval $TEST_CMD'
-    artifacts:
-        <<: *e2e_artifacts
-    dependencies: []
+# # this job is intended to collect statistics on tests in beta stage (=tests that are possibly unstable)
+# # failing test here does not make job fail, run_tests script with --stage='@beta' exits with non-zero
+# # code only when there is some runtime error
+# suite-web e2e chrome stage=beta:
+#     stage: integration testing
+#     variables:
+#         TEST_GROUP: "@beta"
+#     script:
+#         - *e2e_script_common
+#         - export CYPRESS_SNAPSHOT=1
+#         - export BROWSER=chrome
+#         - 'eval $TEST_CMD'
+#     artifacts:
+#         <<: *e2e_artifacts
+#     dependencies: []
 
-# on scheduled job every night, run all stable tests against latest chrome-beta. This is meant to be
-# kind of an early-warning system.
-suite-web e2e chrome-beta stage=stable:
-    stage: integration testing
-    variables:
-        TEST_GROUP: "@stable"
-    only:
-        - schedules
-    allow_failure: false
-    script:
-        - *e2e_script_common
-        - apt-get update && apt-get upgrade -y # update chrome-beta channel to the latest
-        - export BROWSER=/usr/bin/google-chrome-beta
-        - 'eval $TEST_CMD'
-    artifacts:
-        <<: *e2e_artifacts
-    dependencies: []
+# # on scheduled job every night, run all stable tests against latest chrome-beta. This is meant to be
+# # kind of an early-warning system.
+# suite-web e2e chrome-beta stage=stable:
+#     stage: integration testing
+#     variables:
+#         TEST_GROUP: "@stable"
+#     only:
+#         - schedules
+#     allow_failure: false
+#     script:
+#         - *e2e_script_common
+#         - apt-get update && apt-get upgrade -y # update chrome-beta channel to the latest
+#         - export BROWSER=/usr/bin/google-chrome-beta
+#         - 'eval $TEST_CMD'
+#     artifacts:
+#         <<: *e2e_artifacts
+#     dependencies: []
 
 suite-web deploy staging:
     stage: deploy to staging
     dependencies:
         - suite-web build-staging
-        - suite-desktop build mac
-        - suite-desktop build linux
-        - suite-desktop build windows
+        - suite-desktop build mac manual
+        - suite-desktop build linux manual
+        - suite-desktop build windows manual
     environment:
         name: ${CI_BUILD_REF_NAME}-staging
         url: ${STAGING_SERVER_URL}
