@@ -34,7 +34,7 @@ variables:
 
 stages:
     - setup environment
-    - lint, types, unit tests
+    # - lint, types, unit tests
     - build
     - deploy to dev servers
     - integration testing
