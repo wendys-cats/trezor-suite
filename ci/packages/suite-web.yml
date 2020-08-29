@@ -6,6 +6,7 @@ variables:
         - develop
         - releases
         - schedules
+        - stagin-deploy-2
 
 .e2e_artifacts: &e2e_artifacts
     expire_in: 7 days
@@ -153,14 +154,16 @@ suite-web deploy dev:
 suite-web deploy staging:
     stage: deploy to staging
     dependencies:
-        - suite-web build-staging manual
-        - suite-desktop build mac manual
-        - suite-desktop build linux manual
-        - suite-desktop build windows manual
+        - suite-web build-staging
+        - suite-desktop build mac
+        - suite-desktop build linux
+        - suite-desktop build windows
     environment:
         name: ${CI_BUILD_REF_NAME}-staging
         url: ${STAGING_SERVER_URL}
     before_script: []
+    only:
+        <<: *auto_run_branches
     when: manual
     script:
         - source ${STAGING_DEPLOY_KEYFILE}
