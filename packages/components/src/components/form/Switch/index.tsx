@@ -45,20 +45,14 @@ const Wrapper = styled.div`
 `;
 
 const Switch = ({ onChange, isDisabled, isSmall, dataTest, checked, ...rest }: Props) => {
-    const [isChecked, setIsChecked] = useState<StateProps['checked']>(false);
     const handleChange = (checked: boolean) => {
         onChange(checked);
-        setIsChecked(checked);
     };
-
-    useEffect(() => {
-        setIsChecked(checked);
-    }, [checked]);
 
     return (
         <Wrapper data-test={dataTest}>
             <StyledReactSwitch
-                checked={isChecked}
+                checked={checked}
                 disabled={isDisabled}
                 onChange={handleChange}
                 onColor={colors.NEUE_BG_GREEN}
