@@ -50,7 +50,9 @@ const SecurityItem = styled.div`
     }
 `;
 
-type Props = React.HTMLAttributes<HTMLDivElement>;
+interface Props {
+    className?: string;
+};
 
 const EmptyWallet = (props: Props) => {
     return (

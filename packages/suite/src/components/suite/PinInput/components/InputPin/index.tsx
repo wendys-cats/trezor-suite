@@ -33,7 +33,7 @@ const StyledIcon = styled(Icon)`
 interface Props {
     value: string;
     wrapperProps?: Record<string, any>;
-    onDeleteClick: (event?: React.MouseEvent<any>) => void;
+    onDeleteClick: (event?: React.MouseEvent<HTMLDivElement>) => void;
 }
 
 const InputPin = ({ value, onDeleteClick, wrapperProps, ...rest }: Props) => (

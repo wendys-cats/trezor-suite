@@ -18,7 +18,9 @@ const Title = styled.div`
     margin-left: 12px;
 `;
 
-type Props = React.HTMLAttributes<HTMLDivElement>;
+interface Props {
+    className?: string;
+}
 
 const Loading = (props: Props) => {
     return (

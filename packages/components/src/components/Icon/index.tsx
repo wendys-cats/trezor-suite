@@ -71,7 +71,7 @@ const SvgWrapper = styled.div<WrapperProps>`
 `;
 
 type WrapperProps = Omit<Props, 'icon'>;
-interface Props extends React.SVGAttributes<HTMLDivElement> {
+interface Props extends React.HTMLAttributes<HTMLDivElement> {
     className?: string;
     icon: IconType;
     size?: number;
