@@ -75,6 +75,7 @@ const init = async () => {
         title: APP_NAME,
         width: winBounds.width,
         height: winBounds.height,
+        frame: false,
         minWidth: store.MIN_WIDTH,
         minHeight: store.MIN_HEIGHT,
         webPreferences: {
@@ -83,7 +84,7 @@ const init = async () => {
             allowRunningInsecureContent: isDev,
             nodeIntegration: false,
             contextIsolation: true,
-            enableRemoteModule: false,
+            enableRemoteModule: true,
             preload: path.join(__dirname, 'preload.js'),
         },
         icon: path.join(res, 'images', 'icons', '512x512.png'),
@@ -184,6 +185,17 @@ const init = async () => {
     }
 
     mainWindow.loadURL(src);
+
+    // Window controls
+    ipcMain.on('window/close', () => {
+        mainWindow.close();
+    });
+    ipcMain.on('window/minimize', () => {
+        mainWindow.minimize();
+    });
+    ipcMain.on('window/maximize', () => {
+        mainWindow.maximize();
+    });
 
     httpReceiver.start();
 
