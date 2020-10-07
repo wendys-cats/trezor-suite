@@ -95,7 +95,10 @@ class Client {
         this.token = token;
         this.nameIdMap = {};
         this.oauth2Client = new OAuth2Client({
-            clientId: METADATA.GOOGLE_CLIENT_ID,
+            clientId:
+                process.env.SUITE_TYPE === 'desktop'
+                    ? METADATA.GOOGLE_CLIENT_ID_DESKTOP
+                    : METADATA.GOOGLE_CLIENT_ID_DESKTOP,
         });
         this.oauth2Client.on('tokens', tokens => {
             if (tokens.refresh_token) {
