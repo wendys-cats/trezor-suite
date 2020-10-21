@@ -8,11 +8,13 @@ interface WrapperProps {
 }
 
 const Wrapper = styled.span<WrapperProps>`
-    ${(props: WrapperProps) =>
+    padding: 0px 0px;
+    ${props =>
         props.discreetMode &&
         css`
-            transition: all 0.1s ease;
-            filter: blur(${(props: WrapperProps) => props.intensity}px);
+            transition: filter 0.1s ease, padding 1s ease;
+            padding: 0px 5px;
+            filter: blur(${props.intensity}px);
 
             &:hover {
                 filter: none;
