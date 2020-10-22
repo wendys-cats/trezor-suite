@@ -1,0 +1,13 @@
+diff --git a/node_modules/electron/install.js b/node_modules/electron/install.js
+index b613466..ae3af65 100644
+--- a/node_modules/electron/install.js
++++ b/node_modules/electron/install.js
+@@ -18,6 +18,8 @@ if (isInstalled()) {
+   process.exit(0)
+ }
+ 
++console.log('platform', process.env.npm_config_platform || process.platform);
++console.log('arch', process.env.npm_config_arch || process.arch);
+ // downloads if not cached
+ downloadArtifact({
+   version,
