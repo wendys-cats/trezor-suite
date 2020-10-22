@@ -26,5 +26,5 @@ install and build:
     script:
 
         - node -e 'console.log("platform", process.platform)'
-        - node -e 'console.log("arch", process.arch)'
+        - node -e 'console.log("arcash", process.arch)'
         - yarn install --pure-lockfile --cache-folder .yarn
