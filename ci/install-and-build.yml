@@ -24,7 +24,7 @@ install and build:
             - packages/translations-manager/lib
     stage: setup environment
     script:
-
+        - wget -S https://github.com/electron/electron/releases/download/v10.1.0/electron-v10.1.0-linux-x64.zip
         - node -e 'console.log("platform", process.platform)'
         - node -e 'console.log("arch", process.arch)'
         - export npm_config_platform="linux"
