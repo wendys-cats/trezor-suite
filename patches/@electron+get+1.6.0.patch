@@ -1,12 +1,12 @@
 diff --git a/node_modules/@electron/get/dist/cjs/index.js b/node_modules/@electron/get/dist/cjs/index.js
-index f4d7b23..837b3fe 100644
+index f4d7b23..4a191b2 100644
 --- a/node_modules/@electron/get/dist/cjs/index.js
 +++ b/node_modules/@electron/get/dist/cjs/index.js
 @@ -91,6 +91,7 @@ function downloadArtifact(_artifactDetails) {
                      artifactDetails.version = utils_1.normalizeVersion(artifactDetails.version);
                      fileName = artifact_utils_1.getArtifactFileName(artifactDetails);
                      url = artifact_utils_1.getArtifactRemoteURL(artifactDetails);
-+                    console.log('=====url========', urls);
++                    console.log('=====url========', url);
                      cache = new Cache_1.Cache(artifactDetails.cacheRoot);
                      if (!!artifactDetails.force) return [3 /*break*/, 2];
                      d("Checking the cache for " + fileName + " (" + url + ")");
