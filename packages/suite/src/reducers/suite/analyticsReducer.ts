@@ -12,7 +12,7 @@ export interface State {
 
 export const initialState: State = {
     // sessionId is generated only on app start, either added to storage-loaded action or taken from initial state
-    sessionId: getAnalyticsRandomId(),
+    sessionId: undefined,
     instanceId: undefined,
     enabled: false,
 };
@@ -31,7 +31,7 @@ const analyticsReducer = (state: State = initialState, action: Action): State =>
                 // - sessionId is semi-persistent, lives in memory
                 break;
             case STORAGE.LOADED:
-                return action.payload.analytics;
+                return { ...action.payload.analytics, sessionId: getAnalyticsRandomId() };
             // no default
         }
     });
