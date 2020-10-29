@@ -2,7 +2,7 @@ import addressValidator from 'trezor-address-validator';
 import { Account } from '@wallet-types';
 
 const isTestnet = (symbol: Account['symbol']): boolean => {
-    const testnets = ['test', 'txrp', 'trop'];
+    const testnets = ['test', 'txrp', 'trop', 'taz'];
     return testnets.includes(symbol);
 };
 
@@ -14,6 +14,8 @@ const getCoinFromTestnet = (symbol: Account['symbol']) => {
             return 'xrp';
         case 'trop':
             return 'eth';
+        case 'taz':
+            return 'zec';
         default:
             return symbol;
     }
