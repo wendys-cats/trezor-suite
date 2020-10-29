@@ -76,6 +76,8 @@ export const getTitleForNetwork = (symbol: Account['symbol']) => {
             return messages.TR_NETWORK_XRP;
         case 'txrp':
             return messages.TR_NETWORK_XRP_TESTNET;
+        case 'taz':
+            return { id: 'TR_NETWORK_ZCASH_TESTNET', defaultMessage: 'Zcash Testnet' };
         default:
             return messages.TR_NETWORK_UNKNOWN;
     }

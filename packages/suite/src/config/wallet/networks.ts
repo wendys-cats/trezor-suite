@@ -241,6 +241,19 @@ const networks = [
     },
     // Bitcoin testnet
     {
+        name: 'Zcash Testnet',
+        networkType: 'bitcoin',
+        symbol: 'taz',
+        bip44: "m/44'/1'/i'",
+        hasSignVerify: true,
+        decimals: 6,
+        testnet: true,
+        explorer: {
+            tx: 'https://blockbook-dev.corp.sldev.cz:19132/tx/',
+            account: 'https://blockbook-dev.corp.sldev.cz:19132/xpub/',
+        },
+    },
+    {
         name: 'Bitcoin Testnet',
         networkType: 'bitcoin',
         symbol: 'test',

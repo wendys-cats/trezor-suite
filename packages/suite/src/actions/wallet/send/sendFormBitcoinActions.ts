@@ -169,6 +169,9 @@ export const signTransaction = (
         }
         // signEnhancement = ZEC_SIGN_ENHANCEMENT;
     }
+    if (account.symbol === 'taz') {
+        signEnhancement = ZEC_SIGN_ENHANCEMENT;
+    }
 
     if (formValues.options.includes('bitcoinRBF')) {
         // RBF is set, add sequence to inputs

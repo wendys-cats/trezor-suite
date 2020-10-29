@@ -21,7 +21,12 @@ export const initialState: State = {
     discreetMode: false,
     enabledNetworks: ['btc'],
     lastUsedFeeLevel: {},
-    blockbookUrls: [],
+    blockbookUrls: [
+        {
+            coin: 'taz',
+            url: 'https://blockbook-dev.corp.sldev.cz:19132/',
+        },
+    ],
 };
 
 const settingsReducer = (state: State = initialState, action: Action): State => {
