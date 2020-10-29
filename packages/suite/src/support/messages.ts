@@ -1514,6 +1514,10 @@ const definedMessages = defineMessages({
         defaultMessage: 'Zcash',
         id: 'TR_NETWORK_ZCASH',
     },
+    TR_NETWORK_ZCASH_TESTNET: {
+        defaultMessage: 'Zcash Testnet',
+        id: 'TR_NETWORK_ZCASH_TESTNET',
+    },
     TR_NEW_COMMUNICATION_TOOL: {
         defaultMessage:
             'New communication tool to facilitate the connection between your Trezor and your internet browser.',

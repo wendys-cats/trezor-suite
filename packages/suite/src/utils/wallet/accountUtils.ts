@@ -58,6 +58,8 @@ export const getTitleForNetwork = (symbol: Account['symbol']) => {
             return messages.TR_NETWORK_VERTCOIN;
         case 'zec':
             return messages.TR_NETWORK_ZCASH;
+        case 'taz':
+            return messages.TR_NETWORK_ZCASH_TESTNET;
         case 'eth':
             return messages.TR_NETWORK_ETHEREUM;
         case 'trop':
@@ -76,8 +78,6 @@ export const getTitleForNetwork = (symbol: Account['symbol']) => {
             return messages.TR_NETWORK_XRP;
         case 'txrp':
             return messages.TR_NETWORK_XRP_TESTNET;
-        case 'taz':
-            return { id: 'TR_NETWORK_ZCASH_TESTNET', defaultMessage: 'Zcash Testnet' };
         default:
             return messages.TR_NETWORK_UNKNOWN;
     }
