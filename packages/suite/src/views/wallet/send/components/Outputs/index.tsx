@@ -1,6 +1,6 @@
 import React, { useRef, useEffect, useState } from 'react';
 import styled, { css } from 'styled-components';
-import { AnimatePresence, motion, MotionProps } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
 import { colors } from '@trezor/components';
 import { useSendFormContext } from '@wallet-hooks';
 import Address from './components/Address';
@@ -65,11 +65,11 @@ const Outputs = ({ disableAnim }: Props) => {
         }
     }, [outputs.length, renderedOutputs, setRenderedOutputs]);
 
-    const customAnim: MotionProps = { ...ANIMATION.EXPAND };
-    customAnim.variants!.visible = {
+    const customAnim = { ...ANIMATION.EXPAND };
+    Object.assign(customAnim.variants.visible, {
         height: 'auto',
-        transitionEnd: { overflow: 'unset' }, // overflow needs to be unset after animation (dropdowns inside)
-    };
+        transitionEnd: { overflow: 'unset' },
+    });
     const animation = outputs.length > 1 && !disableAnim ? customAnim : {}; // do not animate if there is only 1 output, prevents animation on clear
 
     return (
