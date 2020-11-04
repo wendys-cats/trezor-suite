@@ -45,6 +45,10 @@
                 "to": "images/icons/512x512.png"
             }
         ],
+        "protocols": {
+            "name": "Trezor Suite",
+            "schemes": ["trezor-suite"]
+        },
         "publish": {
             "provider": "github",
             "repo": "trezor-suite",

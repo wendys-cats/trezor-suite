@@ -43,6 +43,13 @@ const httpReceiver = new HttpReceiver();
 const bridge = new BridgeProcess();
 const tor = new TorProcess();
 
+// Single instance lock
+const singleInstace = app.requestSingleInstanceLock();
+if (!singleInstace) {
+    app.quit();
+}
+
+// Keyboard shortcuts
 const registerShortcuts = (window: BrowserWindow) => {
     // internally uses before-input-event, which should be safer than adding globalShortcut and removing it on blur event
     // https://github.com/electron/electron/issues/8491#issuecomment-274790124
@@ -448,6 +455,26 @@ app.on('browser-window-focus', (_event, win) => {
     if (isDev && !win.webContents.isDevToolsOpened()) {
         win.webContents.openDevTools();
     }
+});
+
+// Custom protocol support
+app.setAsDefaultProtocolClient('trezor-suite');
+
+let deeplinkingUrl; // Not used at the moment
+app.on('second-instance', (/* event, argv, cwd */) => {
+    if (mainWindow) {
+        if (mainWindow.isMinimized()) {
+            mainWindow.restore();
+        }
+
+        mainWindow.focus();
+    }
+});
+
+// Protocol handler for osx
+app.on('open-url', (event, url) => {
+    event.preventDefault();
+    deeplinkingUrl = url;
 });
 
 ipcMain.on('bridge/start', async (_event, devMode?: boolean) => {
