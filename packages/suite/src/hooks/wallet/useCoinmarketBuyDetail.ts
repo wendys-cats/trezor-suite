@@ -25,7 +25,7 @@ export const useCoinmarketBuyDetail = (props: Props) => {
 
     return {
         account,
-        trade: buyTrade,
+        trade: buyTrade as TradeBuy,
         transactionId,
         buyInfo,
     };

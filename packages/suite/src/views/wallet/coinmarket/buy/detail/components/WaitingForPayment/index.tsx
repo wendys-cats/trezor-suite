@@ -8,7 +8,7 @@ import { BuyTrade } from 'invity-api';
 import { Account } from '@wallet-types';
 import invityAPI from '@suite-services/invityAPI';
 import { createTxLink } from '@wallet-utils/coinmarket/buyUtils';
-import * as coinmarketCommonActions from '@wallet-actions/coinmarketCommonActions';
+import * as coinmarketCommonActions from '@wallet-actions/coinmarket/coinmarketCommonActions';
 import { useActions } from '@suite-hooks';
 
 const Wrapper = styled.div`

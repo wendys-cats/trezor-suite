@@ -1,8 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Account } from '@wallet-types';
 import { AmountLimits } from '@wallet-types/coinmarketBuyForm';
-import { BuyTrade, BuyTradeQuoteRequest, BuyTradeFormResponse } from 'invity-api';
-import { Trade } from '@wallet-reducers/coinmarketReducer';
+import { BuyTrade, BuyTradeQuoteRequest, BuyTradeFormResponse, BuyTradeStatus } from 'invity-api';
 import { symbolToInvityApiSymbol } from '@wallet-utils/coinmarket/coinmarketUtils';
 import { isDesktop } from '@suite-utils/env';
 import { ELECTRON_RECEIVER_SERVER } from '@wallet-constants/coinmarket/buy';
@@ -65,27 +64,6 @@ export function processQuotes(allQuotes: BuyTrade[]): [BuyTrade[], BuyTrade[]] {
 
     return [quotes, alternativeQuotes];
 }
-
-export const getAccountInfo = (account: Account) => {
-    switch (account.networkType) {
-        case 'bitcoin': {
-            const firstUnused = account.addresses?.unused[0];
-            if (firstUnused) {
-                return { address: firstUnused.address, path: firstUnused.path };
-            }
-
-            return { address: undefined, path: undefined };
-        }
-        case 'ripple':
-        case 'ethereum': {
-            return {
-                address: account.descriptor,
-                path: account.path,
-            };
-        }
-        // no default
-    }
-};
 
 export function createQuoteLink(request: BuyTradeQuoteRequest, account: Account): string {
     const assetPrefix = process.env.assetPrefix || '';
@@ -159,7 +137,7 @@ export function submitRequestForm(tradeForm: BuyTradeFormResponse): void {
     }
 }
 
-export const getStatusMessage = (status: Trade['data']['status']) => {
+export const getStatusMessage = (status: BuyTradeStatus) => {
     switch (status) {
         case 'LOGIN_REQUEST':
         case 'APPROVAL_PENDING':
