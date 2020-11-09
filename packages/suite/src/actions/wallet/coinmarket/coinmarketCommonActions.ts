@@ -66,6 +66,7 @@ export const verifyAddress = (account: Account, inExchange = false) => async (
         device,
         path,
         useEmptyPassphrase,
+        coin: account.symbol,
     };
 
     // catch button request and open modal

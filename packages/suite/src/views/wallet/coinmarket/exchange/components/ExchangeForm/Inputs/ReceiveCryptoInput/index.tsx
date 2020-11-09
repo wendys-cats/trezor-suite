@@ -3,7 +3,7 @@ import React from 'react';
 import { formatNetworkAmount } from '@wallet-utils/accountUtils';
 import { FIAT } from '@suite-config';
 import styled from 'styled-components';
-import { useDebounce } from 'react-use';
+import useDebounce from 'react-use/lib/useDebounce';
 import { isDecimalsValid, isInteger } from '@wallet-utils/validation';
 import { useCoinmarketExchangeFormContext } from '@wallet-hooks/useCoinmarketExchangeForm';
 import { Translation } from '@suite-components';

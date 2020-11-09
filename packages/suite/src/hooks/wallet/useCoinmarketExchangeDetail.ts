@@ -9,18 +9,18 @@ export const useCoinmarketExchangeDetail = (props: Props) => {
     const { selectedAccount, trades, transactionId } = props;
     const exchangeTrade = trades.find(
         trade => trade.tradeType === 'exchange' && trade.key === transactionId,
-    );
+    ) as TradeExchange;
     const { account } = selectedAccount;
     const invityAPIUrl = useSelector(state => state.suite.settings.debug.invityAPIUrl);
     if (invityAPIUrl) {
         invityAPI.setInvityAPIServer(invityAPIUrl);
     }
     const exchangeInfo = useSelector(state => state.wallet.coinmarket.exchange.exchangeInfo);
-    useWatchExchangeTrade(account, exchangeTrade as TradeExchange);
+    useWatchExchangeTrade(account, exchangeTrade);
 
     return {
         account,
-        trade: exchangeTrade as TradeExchange | undefined,
+        trade: exchangeTrade,
         transactionId,
         exchangeInfo,
     };

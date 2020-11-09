@@ -11,7 +11,7 @@ export const useCoinmarketBuyDetail = (props: Props) => {
         trade =>
             trade.tradeType === 'buy' &&
             (trade.key === transactionId || trade.data?.originalPaymentId === transactionId),
-    );
+    ) as TradeBuy;
     const { account } = selectedAccount;
     const { invityAPIUrl, buyInfo } = useSelector(state => ({
         invityAPIUrl: state.suite.settings.debug.invityAPIUrl,
@@ -21,11 +21,11 @@ export const useCoinmarketBuyDetail = (props: Props) => {
         invityAPI.setInvityAPIServer(invityAPIUrl);
     }
 
-    useWatchBuyTrade(account, buyTrade as TradeBuy);
+    useWatchBuyTrade(account, buyTrade);
 
     return {
         account,
-        trade: buyTrade as TradeBuy,
+        trade: buyTrade,
         transactionId,
         buyInfo,
     };

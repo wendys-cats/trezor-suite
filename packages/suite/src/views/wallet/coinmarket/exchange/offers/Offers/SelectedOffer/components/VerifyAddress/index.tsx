@@ -24,7 +24,7 @@ import { Account } from '@wallet-types';
 import * as modalActions from '@suite-actions/modalActions';
 import { useDispatch } from 'react-redux';
 import { Dispatch } from '@suite-types';
-import { useTimeoutFn } from 'react-use';
+import useTimeoutFn from 'react-use/lib/useTimeoutFn';
 import { useForm } from 'react-hook-form';
 import { TypedValidationRules } from '@wallet-types/form';
 import addressValidator from 'trezor-address-validator';
