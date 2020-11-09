@@ -45,7 +45,7 @@ export const useCoinmarketExchangeForm = (props: Props): ExchangeFormContextValu
     const fiatRates = fiat.coins.find(item => item.symbol === symbol);
     const localCurrencyOption = { value: localCurrency, label: localCurrency.toUpperCase() };
     const methods = useForm<FormState>({ mode: 'onChange' });
-    const { register, setValue, getValues, setError } = methods;
+    const { register, setValue, getValues, setError, clearErrors } = methods;
     const [token, setToken] = useState<string | undefined>(getValues('receiveCryptoSelect')?.value);
     const [amountLimits, setAmountLimits] = useState<AmountLimits | undefined>(undefined);
     const [isMax, setIsMax] = useState<boolean | undefined>(undefined);
@@ -170,18 +170,14 @@ export const useCoinmarketExchangeForm = (props: Props): ExchangeFormContextValu
                 updateFiatValue(amountToFill);
             }
             saveComposedTransaction(transactionInfo);
-            methods.clearErrors('receiveCryptoInput');
+            clearErrors('receiveCryptoInput');
             ok = true;
         }
 
-        if (transactionInfo?.type === 'error') {
-            let { error } = transactionInfo;
-            if (error === 'NOT-ENOUGH-FUNDS') {
-                error = 'AMOUNT_IS_NOT_ENOUGH';
-            }
+        if (transactionInfo?.type === 'error' && transactionInfo.errorMessage) {
             setError('receiveCryptoInput', {
                 type: 'compose',
-                message: error,
+                message: transactionInfo.errorMessage as any,
             });
         }
 
@@ -217,7 +213,7 @@ export const useCoinmarketExchangeForm = (props: Props): ExchangeFormContextValu
         exchangeInfo?.exchangeList?.length === 0 || !exchangeInfo?.sellSymbols.has(account.symbol);
 
     const onSubmit = async () => {
-        const formValues = methods.getValues();
+        const formValues = getValues();
         const sendStringAmount = formValues.receiveCryptoInput || '';
         const send = formValues.receiveCryptoSelect.value;
         const receive = formValues.sendCryptoSelect.value;

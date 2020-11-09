@@ -28,7 +28,7 @@ const StyledInput = styled(Input)`
     border-bottom-right-radius: 0;
 `;
 
-const BuyCryptoInput = () => {
+const ReceiveCryptoInput = () => {
     const {
         register,
         errors,
@@ -162,4 +162,4 @@ const BuyCryptoInput = () => {
     );
 };
 
-export default BuyCryptoInput;
+export default ReceiveCryptoInput;
