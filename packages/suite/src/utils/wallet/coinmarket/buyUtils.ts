@@ -1,10 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { Account } from '@wallet-types';
 import { AmountLimits } from '@wallet-types/coinmarketBuyForm';
-import { BuyTrade, BuyTradeQuoteRequest, BuyTradeFormResponse, BuyTradeStatus } from 'invity-api';
+import { BuyTrade, BuyTradeQuoteRequest, BuyTradeStatus, BuyTradeFormResponse } from 'invity-api';
 import { symbolToInvityApiSymbol } from '@wallet-utils/coinmarket/coinmarketUtils';
-import { isDesktop } from '@suite-utils/env';
-import { ELECTRON_RECEIVER_SERVER } from '@wallet-constants/coinmarket/buy';
 
 // loop through quotes and if all quotes are either with error below minimum or over maximum, return the limits
 export function getAmountLimits(
@@ -65,77 +63,16 @@ export function processQuotes(allQuotes: BuyTrade[]): [BuyTrade[], BuyTrade[]] {
     return [quotes, alternativeQuotes];
 }
 
-export function createQuoteLink(request: BuyTradeQuoteRequest, account: Account): string {
-    const assetPrefix = process.env.assetPrefix || '';
-    let hash: string;
-
-    if (request.wantCrypto) {
-        hash = `qc/${request.country}/${request.fiatCurrency}/${request.cryptoStringAmount}/${request.receiveCurrency}`;
-    } else {
-        hash = `qf/${request.country}/${request.fiatCurrency}/${request.fiatStringAmount}/${request.receiveCurrency}`;
-    }
-
-    const params = `offers/${account.symbol}/${account.accountType}/${account.index}/${hash}`;
-
-    if (isDesktop()) {
-        return `${ELECTRON_RECEIVER_SERVER}/buy-redirect?p=${encodeURIComponent(
-            `/coinmarket-redirect/${params}`,
-        )}`;
-    }
-
-    return `${window.location.origin}${assetPrefix}/coinmarket-redirect#${params}`;
+export function createQuoteLink(_request: BuyTradeQuoteRequest, _account: Account): string {
+    console.log('aaaa');
+    return '';
 }
 
-export function createTxLink(trade: BuyTrade, account: Account): string {
-    const assetPrefix = process.env.assetPrefix || '';
-    const params = `detail/${account.symbol}/${account.accountType}/${account.index}/${trade.paymentId}`;
-    if (isDesktop()) {
-        return `${ELECTRON_RECEIVER_SERVER}/buy-redirect?p=${encodeURIComponent(
-            `/coinmarket-redirect/${params}`,
-        )}`;
-    }
-
-    return `${window.location.origin}${assetPrefix}/coinmarket-redirect#${params}`;
+export function createTxLink(_trade: BuyTrade, _account: Account): string {
+    return '';
 }
 
-function addHiddenFieldToForm(form: any, fieldName: string, fieldValue: any) {
-    const hiddenField = document.createElement('input');
-    hiddenField.type = 'hidden';
-    hiddenField.name = fieldName;
-    hiddenField.value = fieldValue;
-    form.appendChild(hiddenField);
-}
-
-export function submitRequestForm(tradeForm: BuyTradeFormResponse): void {
-    if (!tradeForm || !tradeForm.form) return;
-    // for IFRAME there is nothing to submit
-    if (tradeForm.form.formMethod === 'IFRAME') return;
-
-    if (tradeForm.form.formMethod === 'GET' && tradeForm.form.formAction) {
-        window.open(tradeForm.form.formAction, isDesktop() ? '_blank' : '_self');
-        return;
-    }
-
-    const { fields } = tradeForm.form;
-    if (isDesktop()) {
-        let params = `a=${encodeURIComponent(tradeForm.form.formAction)}`;
-        Object.keys(fields).forEach(k => {
-            params += `&${k}=${encodeURIComponent(fields[k])}`;
-        });
-        window.open(`${ELECTRON_RECEIVER_SERVER}/buy-post?${params}`, '_blank');
-    } else {
-        const form = document.createElement('form');
-        form.method = tradeForm.form.formMethod;
-        form.action = tradeForm.form.formAction;
-        Object.keys(fields).forEach(k => {
-            addHiddenFieldToForm(form, k, fields[k]);
-        });
-
-        if (!document.body) return;
-        document.body.appendChild(form);
-        form.submit();
-    }
-}
+export function submitRequestForm(_tradeForm: BuyTradeFormResponse): void {}
 
 export const getStatusMessage = (status: BuyTradeStatus) => {
     switch (status) {

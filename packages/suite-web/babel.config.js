@@ -32,6 +32,9 @@ module.exports = api => {
                     '^@(.+)-hooks': '../../packages/suite/src/hooks/\\1/index',
                     '^@(.+)-services/(.+)': '../../packages/suite/src/services/\\1/\\2',
                     '^@(.+)-services': '../../packages/suite/src/services/\\1/index',
+
+                    '@wallet-utils/coinmarket/buyUtils.ts':
+                        '../../packages/suite-web/src/utils/buyUtils.ts',
                 },
             },
         ],
