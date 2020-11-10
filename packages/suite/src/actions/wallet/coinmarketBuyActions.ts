@@ -1,10 +1,19 @@
 import { Account } from '@wallet-types';
-import { BuyListResponse, BuyProviderInfo, BuyTradeQuoteRequest, BuyTrade } from 'invity-api';
+import {
+    BuyListResponse,
+    BuyProviderInfo,
+    BuyTradeQuoteRequest,
+    BuyTrade,
+    BuyTradeFormResponse,
+} from 'invity-api';
 import invityAPI from '@suite-services/invityAPI';
 import { COINMARKET_BUY } from './constants';
-import { Dispatch } from '@suite-types';
+import { GetState, Dispatch } from '@suite-types';
 import regional from '@wallet-constants/coinmarket/regional';
 import * as modalActions from '@suite-actions/modalActions';
+import * as suiteActions from '@suite-actions/suiteActions';
+import { submitRequestForm as utilsSubmitRequestForm } from '@wallet-utils/coinmarket/buyUtils';
+import { isDesktop } from '@suite-utils/env';
 
 export interface BuyInfo {
     buyInfo?: BuyListResponse;
@@ -147,3 +156,14 @@ export const saveQuotes = (
     quotes,
     alternativeQuotes,
 });
+
+export const submitRequestForm = (tradeForm: BuyTradeFormResponse) => (
+    dispatch: Dispatch,
+    getState: GetState,
+) => {
+    const { device } = getState().suite;
+    if (device && !device.remember && !isDesktop()) {
+        dispatch(suiteActions.rememberDevice(device, true));
+    }
+    utilsSubmitRequestForm(tradeForm);
+};
