@@ -25,6 +25,7 @@ in
       osslsigncode
       p7zip
       squashfsTools
+      cypress
       # winePackages.minimal
     ] ++ lib.optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
       Cocoa
