@@ -84,16 +84,17 @@ suite-web e2e chrome stage=suite:
   image: registry.gitlab.com/satoshilabs/trezor/trezor-user-env/trezor-user-env:latest
   variables:
     TEST_GROUP: "@group:suite"
+    DISPLAY: "dummy"
   # needs:
   #   - suite-web deploy dev
   script:
     # - *e2e_script_common
     # - export CYPRESS_SNAPSHOT=1
     # - export BROWSER=chrome
-    - nix-shell --run "which Xvfb"
+    - nix-shell --run "which Xvfb || true"
     - alias Xvfb=$(nix-shell --run "which xvfb-run")
-    - nix-shell --run "which Xvfb"
-    - nix-shell --run "which xvfb-run"
+    - nix-shell --run "which Xvfb || true"
+    - nix-shell --run "which xvfb-run || true"
     - export CYPRESS_RUN_BINARY=`nix-shell --run "which Cypress"`
     - /trezor-user-env/run.sh &
     - nix-shell --run "which xvfb-run && which Xvfb && node ./packages/integration-tests/projects/suite-web/run_tests.js --project ./packages/integration-tests/projects/suite-web --stage=$TEST_GROUP"
