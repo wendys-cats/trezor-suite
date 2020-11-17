@@ -8,7 +8,7 @@
         "test:suite-web:ci:run": "./projects/suite-web/scripts/run-ci.sh"
     },
     "dependencies": {
-        "cypress": "^4.7.0",
+        "cypress": "^4.12.0",
         "ts-loader": "^8.0.10",
         "webpack": "^4.44.2"
     },
