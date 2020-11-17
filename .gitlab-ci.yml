@@ -1,6 +1,10 @@
 # ! DO NOT set latest here USE custom hash !
-# image: registry.gitlab.com/satoshilabs/trezor/trezor-suite/base:293dd52c3910666bd91620c23b2c61085ec53d18
-image: registry.gitlab.com/satoshilabs/trezor/trezor-user-env/trezor-user-env:latest
+image: registry.gitlab.com/satoshilabs/trezor/trezor-suite/base:293dd52c3910666bd91620c23b2c61085ec53d18
+
+# todo: 
+# do we want to use trezor-user-env as the base image?
+# it seems it does not have yarn https://gitlab.com/satoshilabs/trezor/trezor-suite/-/jobs/854031503
+# image: registry.gitlab.com/satoshilabs/trezor/trezor-user-env/trezor-user-env:latest
 
 cache:
   untracked: true
@@ -48,14 +52,14 @@ stages:
 include:
   - ci/environment.yml
   - ci/install-and-build.yml
-  - ci/prebuild.yml
-  - ci/packages/components.yml
-  - ci/packages/suite.yml
+  # - ci/prebuild.yml
+  # - ci/packages/components.yml
+  # - ci/packages/suite.yml
   - ci/packages/suite-web.yml
-  - ci/packages/suite-desktop.yml
+  # - ci/packages/suite-desktop.yml
   # - ci/packages/suite-native.yml
-  - ci/packages/rollout.yml
-  - ci/packages/landing-page.yml
-  - ci/packages/suite-web-landing.yml
+  # - ci/packages/rollout.yml
+  # - ci/packages/landing-page.yml
+  # - ci/packages/suite-web-landing.yml
   # to be run only on scheduled pipelines
-  - ci/schedules.yml
+  # - ci/schedules.yml
