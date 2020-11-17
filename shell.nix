@@ -26,6 +26,7 @@ in
       p7zip
       squashfsTools
       cypress
+      xvfb-run
       # winePackages.minimal
     ] ++ lib.optionals stdenv.isDarwin (with darwin.apple_sdk.frameworks; [
       Cocoa
