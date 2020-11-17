@@ -79,7 +79,6 @@ variables:
   - export CYPRESS_ASSET_PREFIX=/web
   - export CYPRESS_baseUrl=${DEV_SERVER_URL}/suite-web/${CI_BUILD_REF_NAME}
   - export TRACK_SUITE_URL=https://track-suite.herokuapp.com
-
 suite-web e2e chrome stage=suite:
   stage: integration testing
   image: registry.gitlab.com/satoshilabs/trezor/trezor-user-env/trezor-user-env:latest
@@ -91,7 +90,7 @@ suite-web e2e chrome stage=suite:
     # - *e2e_script_common
     # - export CYPRESS_SNAPSHOT=1
     # - export BROWSER=chrome
-    # - "eval $TEST_CMD"
+    - export CYPRESS_RUN_BINARY=`nix-shell --run "which Cypress"`
     - /trezor-user-env/run.sh &
     - nix-shell --run "node ./packages/integration-tests/projects/suite-web/run_tests.js --project ./packages/integration-tests/projects/suite-web --stage=$TEST_GROUP"
   artifacts:
