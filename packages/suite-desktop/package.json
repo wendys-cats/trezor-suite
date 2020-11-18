@@ -15,7 +15,7 @@
         "copy-files": "yarn workspace @trezor/suite-data copy-static-files",
         "build:electron": "rimraf ./dist && node scripts/build.js",
         "build:desktop": "rimraf ./build && next build && next export -o build && cross-env NODE_ENV=production yarn build:electron",
-        "build:mac": "yarn clean && yarn build:desktop && electron-builder --mac --x64 -p never",
+        "build:mac": "yarn clean && yarn build:desktop && electron-builder --mac --x64 --arm64 -p never",
         "build:linux": "yarn clean && yarn build:desktop && electron-builder --linux --x64 --arm64 -p never",
         "build:win": "yarn clean && yarn build:desktop && electron-builder --win --x64 -p never",
         "publish:all": "yarn clean && yarn build:desktop && electron-builder --publish always --mac --linux --win",
