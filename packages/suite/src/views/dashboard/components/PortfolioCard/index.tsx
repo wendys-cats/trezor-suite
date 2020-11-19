@@ -1,35 +1,51 @@
 import React, { useMemo } from 'react';
 import styled from 'styled-components';
 import { useDispatch } from 'react-redux';
-import { Dropdown } from '@trezor/components';
+import { Dropdown, useTheme } from '@trezor/components';
 import { Card, QuestionTooltip } from '@suite-components';
 import { Section } from '@dashboard-components';
 import * as accountUtils from '@wallet-utils/accountUtils';
 import { useDiscovery } from '@suite-hooks';
 import { useFastAccounts, useFiatValue } from '@wallet-hooks';
 import { goto } from '@suite-actions/routerActions';
+import ContentLoader from 'react-content-loader';
 
 import Header from './components/Header';
-import Loading from './components/Loading';
 import Exception from './components/Exception';
 import EmptyWallet from './components/EmptyWallet';
 import DashboardGraph from './components/DashboardGraph/Container';
 import GraphScaleDropdownItem from '@suite-components/TransactionsGraph/components/GraphScaleDropdownItem';
 
+const PortfolioCardSkeleton = () => {
+    const theme = useTheme();
+    return (
+        <ContentLoader
+            viewBox="0 0 900 330"
+            foregroundColor={theme.BG_GREY}
+            backgroundColor="#E8E8E8"
+            style={{ flex: 1 }}
+        >
+            <rect x="0" y="0" width="100%" height="100%" />
+        </ContentLoader>
+    );
+};
+
 const StyledCard = styled(Card)`
     flex-direction: column;
     min-height: 400px;
+    overflow: hidden;
 `;
 
 const Body = styled.div`
     display: flex;
     align-items: center;
-    padding: 0px 20px;
+    /* padding: 0px 20px; */
     flex: 1;
 `;
 
 const PortfolioCard = React.memo(() => {
     const dispatch = useDispatch();
+    // const waitingForDevice = !useSelector(state => state.suite.device)?.state;
     const { fiat, localCurrency } = useFiatValue();
     const { discovery, getDiscoveryStatus } = useDiscovery();
     const accounts = useFastAccounts();
@@ -50,7 +66,7 @@ const PortfolioCard = React.memo(() => {
     if (discoveryStatus && discoveryStatus.status === 'exception') {
         body = <Exception exception={discoveryStatus} discovery={discovery} />;
     } else if (discoveryStatus && discoveryStatus.status === 'loading') {
-        body = <Loading />;
+        body = <PortfolioCardSkeleton />;
     } else {
         body = isDeviceEmpty ? <EmptyWallet /> : <DashboardGraph accounts={accounts} />;
     }
