@@ -151,7 +151,7 @@ suite-web e2e chrome-beta stage=stable:
   allow_failure: false
   script:
     - *e2e_script_common
-    - apt-get update && apt-get upgrade -y # update chrome-beta channel to the latest
+    - apt-get update && apt-get upgrade -y
     - export BROWSER=/usr/bin/google-chrome-beta
     - "eval $TEST_CMD"
   artifacts:
