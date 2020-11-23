@@ -4,6 +4,7 @@ export interface DesktopApi {
     on: (channel: string, func: (...args: any[]) => any) => void;
     once: (channel: string, func: (...args: any[]) => any) => void;
     off: (channel: string, func: (...args: any[]) => any) => void;
+    removeAllListeners: (changel: string) => void;
     // App Ready
     ready: () => void;
     // Auto Updater

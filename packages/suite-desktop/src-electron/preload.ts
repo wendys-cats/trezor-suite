@@ -10,7 +10,7 @@ const validChannels = [
     'bridge/start',
 
     // oauth
-    'oauth/code',
+    'oauth/response',
 
     // Update events
     'update/checking',
@@ -51,12 +51,17 @@ contextBridge.exposeInMainWorld('desktopApi', {
             ipcRenderer.once(channel, (_, ...args) => func(...args));
         }
     },
+    // todo: off does not even exist in electron documentation anymore
+    // https://www.electronjs.org/docs/api/ipc-renderer
     off: (channel: string, func: (...args: any[]) => any) => {
+        ipcRenderer.removeListener(channel, func);
         if (validChannels.includes(channel)) {
             ipcRenderer.off(channel, (_, ...args) => func(...args));
         }
     },
-
+    removeAllListeners: (channel: string) => {
+        ipcRenderer.removeAllListeners(channel);
+    },
     // Updater
     checkForUpdates: (isManual?: boolean) => ipcRenderer.send('update/check', isManual),
     downloadUpdate: () => ipcRenderer.send('update/download'),
