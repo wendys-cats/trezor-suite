@@ -417,7 +417,7 @@ const init = async () => {
     });
     ipcMain.on('update/install', () => {
         quitOnWindowClose = true; // This will force the closing of the window to quit the app on Mac
-        autoUpdater.quitAndInstall();
+        autoUpdater.quitAndInstall(true);
     });
     ipcMain.on('update/cancel', () => {
         mainWindow.webContents.send('update/available', latestVersion);
