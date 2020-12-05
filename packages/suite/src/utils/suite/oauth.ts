@@ -100,8 +100,10 @@ export const extractCredentialsFromAuthorizationFlow = (url: string) => {
     }
 
     openWindowOnAnotherDomain(url, METADATA.AUTH_WINDOW_TITLE, METADATA.AUTH_WINDOW_PROPS, () => {
+        setTimeout(() => {
+            dfd.reject(new Error('window closed'));
+        }, 5000);
         window.removeEventListener('message', onMessageWeb);
-        dfd.reject(new Error('window closed'));
     });
 
     return dfd.promise;
