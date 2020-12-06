@@ -1,3 +1,5 @@
+{ pkgs ? import <nixpkgs> {config.android_sdk.accept_license = true;} }:
+
 # the last successful build of nixos-20.09 (stable) as of 2020-10-11
 with import
   (builtins.fetchTarball {
@@ -7,6 +9,7 @@ with import
 { };
 
 let
+  androidSdk = pkgs.androidenv.androidPkgs_9_0.androidsdk;
   SuitePython = python3.withPackages(ps: [
     ps.yamllint
   ]);
@@ -17,6 +20,11 @@ in
       mdbook
       nodejs
       yarn
+      androidSdk  # native
+      glibc  # native
+      jdk11  # native
+      android-studio  # native
+      watchman  # native
       SuitePython
     ] ++ lib.optionals stdenv.isLinux [
       appimagekit
@@ -30,9 +38,16 @@ in
       Cocoa
       CoreServices
     ]);
+    # native: override the aapt2 that gradle uses with the nix-shipped version
+    GRADLE_OPTS = "-Dorg.gradle.project.android.aapt2FromMavenOverride=${androidSdk}/libexec/android-sdk/build-tools/28.0.3/aapt2";
     shellHook = ''
       export CURDIR="$(pwd)"
       export PATH="$PATH:$CURDIR/node_modules/.bin"
       export ELECTRON_BUILDER_CACHE="$CURDIR/.cache/electron-builder"
+      export ANDROID_HOME=$HOME/Android/Sdk  # native
+      export PATH=$PATH:$ANDROID_HOME/emulator  # native
+      export PATH=$PATH:$ANDROID_HOME/tools  # native
+      export PATH=$PATH:$ANDROID_HOME/tools/bin  # native
+      export PATH=$PATH:$ANDROID_HOME/platform-tools  # native
     '';
   }

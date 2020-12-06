@@ -13,6 +13,7 @@ if [ -f /etc/NIXOS ] ; then
   ln -sf "$(which mksquashfs)" "$ELECTRON_BUILDER_CACHE"/appimage/appimage-12.0.1/linux-x64/mksquashfs || :
   ln -sf "$(which makensis)" "$ELECTRON_BUILDER_CACHE"/nsis/nsis-3.0.4.1/linux/makensis || :
   ln -sf "$(which osslsigncode)" "$ELECTRON_BUILDER_CACHE"/winCodeSign/winCodeSign-2.6.0/linux/osslsigncode || :
+  ln -sf "$(which adb)" "$ANDROID_HOME"/platform-tools/adb || :
 else
   echo "This is not NixOS. Aborting"
   exit 1
