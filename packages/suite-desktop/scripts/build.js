@@ -2,10 +2,10 @@ const path = require('path');
 const { build } = require('esbuild');
 const pkg = require('../package.json');
 
-const electronSource = path.join(__dirname, '..', 'src-electron');
+const electronSource = path.join(__dirname, '..', 'src-app');
 const isDev = process.env.NODE_ENV !== 'production';
 
-console.log('[Electron Build] Starting...');
+console.log('[App Build] Starting...');
 const hrstart = process.hrtime();
 build({
     entryPoints: ['app', 'preload'].map(f => path.join(electronSource, `${f}.ts`)),
@@ -24,7 +24,7 @@ build({
     .then(() => {
         const hrend = process.hrtime(hrstart);
         console.log(
-            '[Electron Build] Finished in %dms',
+            '[App Build] Finished in %dms',
             (hrend[1] / 1000000 + hrend[0] * 1000).toFixed(1),
         );
     })

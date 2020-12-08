@@ -23,12 +23,13 @@
         "publish:mac": "yarn build:mac && electron-builder --publish always --mac",
         "publish:win": "yarn build:win && electron-builder --publish always --win",
         "lint": "yarn lint:app && yarn lint:ui",
-        "lint:app": "eslint 'src-electron/**/*.ts' --parser-options=project:./src-electron/tsconfig.json",
+        "lint:app": "eslint 'src-app/**/*.ts' --parser-options=project:./src-app/tsconfig.json",
         "lint:ui": "eslint 'src/**/*{.ts,.tsx}'",
         "type-check": "yarn type-check:app && yarn type-check:ui",
-        "type-check:app": "tsc --project src-electron/tsconfig.json",
+        "type-check:app": "tsc --project src-app/tsconfig.json",
         "type-check:ui": "tsc --project tsconfig.json",
-        "test:unit": "jest"
+        "test:unit": "jest",
+        "wp:build": "webpack"
     },
     "build": {
         "appId": "io.trezor.TrezorSuite",
@@ -173,6 +174,9 @@
         "react": "16.13.1",
         "react-dom": "16.13.1",
         "styled-components": "5.1.1",
+        "webpack": "^5.9.0",
+        "webpack-cli": "^4.2.0",
+        "webpack-dev-server": "^3.11.0",
         "worker-loader": "^3.0.5"
     }
 }

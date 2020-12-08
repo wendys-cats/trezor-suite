@@ -1,12 +1,12 @@
 module.exports = {
     roots: [
-        '<rootDir>/src-electron',
+        '<rootDir>/src-app',
     ],
     moduleFileExtensions: ['js', 'ts', 'tsx'],
     coverageDirectory: './coverage',
     collectCoverage: true,
     collectCoverageFrom: [
-        '<rootDir>/src-electron/http.ts',
+        '<rootDir>/src-app/http.ts',
     ],
     coverageThreshold: {
         global: {
