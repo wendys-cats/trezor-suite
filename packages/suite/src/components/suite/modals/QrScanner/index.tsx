@@ -98,9 +98,8 @@ const QrScanner = ({ onCancel, decision }: Props) => {
                 const parsedUri = parseUri(data);
                 if (parsedUri) {
                     setReaderLoaded(true);
-                    console.log('decision', decision, parsedUri);
-                    // decision.resolve(parsedUri);
                     onCancel();
+                    decision.resolve(parsedUri);
                 }
             } catch (error) {
                 handleError(error);
