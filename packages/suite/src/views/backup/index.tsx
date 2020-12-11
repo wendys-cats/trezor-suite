@@ -191,6 +191,7 @@ const Backup = (props: Props) => {
                         <Translation id="TR_BACKUP_SUBHEADING_1" />
                     </StyledP>
                     <PreBackupCheckboxes />
+                    fooo
                     <Buttons>
                         <Col>
                             <StyledButton
