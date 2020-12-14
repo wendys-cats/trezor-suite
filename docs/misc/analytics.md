@@ -47,6 +47,11 @@ Breaking change should bump major version. Any other change bumps minor version.
 
 ## Changelog
 
+### 1.6 (unreleased)
+Added: 
+- device-connect
+  - isBitcoinOnly: boolean
+  
 ### 1.5
 Added:
 - suite-ready

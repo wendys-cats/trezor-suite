@@ -78,6 +78,8 @@ export type AnalyticsEvent =
               passphrase_protection: boolean;
               totalInstances: number;
               backup_type: string;
+              // added in 1.6
+              isBitcoinOnly: boolean;
           };
       }
     | {

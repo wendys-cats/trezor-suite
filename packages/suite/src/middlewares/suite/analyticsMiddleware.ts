@@ -13,6 +13,7 @@ import {
     getPlatform,
     getPlatformLanguage,
 } from '@suite-utils/env';
+import { isBitcoinOnly } from '@suite-utils/device';
 
 /*
     In analytics middleware we may intercept actions we would like to log. For example:
@@ -69,6 +70,9 @@ const analytics = (api: MiddlewareAPI<Dispatch, AppState>) => (next: Dispatch) =
             break;
         case DEVICE.CONNECT: {
             const { features, mode } = action.payload;
+            const acquiredDevice = state.devices.find(device => device.type === 'acquired');
+            const isBtcOnly = acquiredDevice ? isBitcoinOnly(acquiredDevice) : false; // In practice it shouldn't happen that acquiredDevice is undefined because we are in DEVICE.CONNECT action
+
             if (features && mode !== 'bootloader') {
                 api.dispatch(
                     analyticsActions.report({
@@ -80,6 +84,7 @@ const analytics = (api: MiddlewareAPI<Dispatch, AppState>) => (next: Dispatch) =
                             pin_protection: features.pin_protection,
                             passphrase_protection: features.passphrase_protection,
                             totalInstances: api.getState().devices.length,
+                            isBitcoinOnly: isBtcOnly,
                             // todo: totalDevices
                             // it should be easy like this:
                             // totalDevices: api.getState().devices.filter(d => !d.instance).length,
