@@ -23,6 +23,7 @@ const validChannels = [
 
     // invity
     'buy-receiver',
+    'spend/message',
 
     // window
     'window/is-maximized',
@@ -51,9 +52,9 @@ contextBridge.exposeInMainWorld('desktopApi', {
             ipcRenderer.once(channel, (_, ...args) => func(...args));
         }
     },
-    off: (channel: string, func: (...args: any[]) => any) => {
+    removeAllListeners: (channel: string) => {
         if (validChannels.includes(channel)) {
-            ipcRenderer.off(channel, (_, ...args) => func(...args));
+            ipcRenderer.removeAllListeners(channel);
         }
     },
 
@@ -66,6 +67,7 @@ contextBridge.exposeInMainWorld('desktopApi', {
 
     // Window controls
     windowClose: () => ipcRenderer.send('window/close'),
+    windowFocus: () => ipcRenderer.send('window/focus'),
     windowMinimize: () => ipcRenderer.send('window/minimize'),
     windowMaximize: () => ipcRenderer.send('window/maximize'),
     windowUnmaximize: () => ipcRenderer.send('window/unmaximize'),

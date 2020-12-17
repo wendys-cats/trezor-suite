@@ -20,6 +20,7 @@ interface Events {
     'oauth/code': (code: string) => void;
     'oauth/error': (message: string) => void;
     'buy/redirect': (url: string) => void;
+    'spend/message': (event: { data: string | string[]; origin: string | string[] }) => void;
 }
 
 export declare interface HttpReceiver {
@@ -45,18 +46,11 @@ export class HttpReceiver extends EventEmitter {
         super();
 
         this.routes = [
-            {
-                pathname: '/oauth',
-                handler: this.oauthHandler,
-            },
-            {
-                pathname: '/buy-redirect',
-                handler: this.buyHandler,
-            },
-            {
-                pathname: '/buy-post',
-                handler: this.buyPostSubmitHandler,
-            },
+            { pathname: '/oauth', handler: this.oauthHandler },
+            { pathname: '/buy-redirect', handler: this.buyHandler },
+            { pathname: '/spend-iframe', handler: this.spendIframeHandler },
+            { pathname: '/spend-handle-message', handler: this.spendHandleMessage },
+            { pathname: '/buy-post', handler: this.buyPostSubmitHandler },
             /**
              * Register more routes here. Each route must have pathname and handler function.
              */
@@ -169,6 +163,74 @@ export class HttpReceiver extends EventEmitter {
         if (query && query.p) {
             this.emit('buy/redirect', query.p.toString());
         }
+
+        const template = this.applyTemplate('You may now close this window.');
+        response.end(template);
+    };
+
+    private spendIframeHandler = (_request: Request, response: http.ServerResponse) => {
+        // eslint-disable-next-line no-useless-escape
+        const regexString = `^https:\/\/.+\.bitrefill\.com$`;
+        const template = this.applyTemplate(`
+            <!DOCTYPE html>
+                <head>
+                    <style>
+                        body, html {
+                            width: 100%;
+                            height: 100%;
+                            margin: 0;
+                            padding: 0;
+                            display: flex;
+                            justify-content: center;
+                        }
+                        iframe {
+                            border: 0;
+                            width: 100%;
+                            height: 100%;
+                            display: block;
+                        }
+                    </style>
+                </head>
+                <body>
+                    <iframe
+                        id="iframe"
+                        title="."
+                        sandbox="allow-scripts allow-forms allow-same-origin"
+                        src=""
+                    ></iframe>
+                    <script>
+                        function eventHandler(event, handleMessageEndpoint) {
+                            var req = new XMLHttpRequest();
+                            req.open("GET", handleMessageEndpoint + '?data=' + encodeURIComponent(event.data) + '&origin=' + event.origin);
+                            req.send();
+                        }
+                        const urlParams = new URLSearchParams(window.location.search);
+                        const iframe = document.getElementById('iframe');
+                        const iframeSrc = urlParams.get('voucherSiteUrl');
+                        const iframeUrl = new URL(urlParams.get('voucherSiteUrl'));
+                        const origin = iframeUrl.origin;
+                        // eslint-disable-next-line no-useless-escape
+                        const regex = new RegExp('${regexString}');
+                        if(regex.test(origin)) {
+                            const handleMessageEndpoint = urlParams.get('handleMessageEndpoint');
+                            iframe.src = decodeURIComponent(iframeSrc);
+                            window.addEventListener('message', function(event) {
+                                eventHandler(event, handleMessageEndpoint);
+                            });
+                        }
+                    </script>
+                </body>
+            </html>
+            `);
+        response.end(template);
+    };
+
+    private spendHandleMessage = (request: Request, response: http.ServerResponse) => {
+        const { query } = url.parse(request.url, true);
+        this.emit('spend/message', {
+            data: query.data,
+            origin: query.origin,
+        });
 
         const template = this.applyTemplate('You may now close this window.');
         response.end(template);
