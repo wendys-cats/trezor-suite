@@ -53,10 +53,6 @@ export const getLocationOrigin = () => {
     return window.location.origin;
 };
 
-export const getLocationHostname = () => {
-    return window.location.hostname;
-};
-
 export const submitRequestForm = async (
     formMethod: 'GET' | 'POST' | 'IFRAME',
     formAction: string,

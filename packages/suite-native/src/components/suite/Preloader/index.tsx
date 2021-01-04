@@ -7,10 +7,10 @@
 
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { Text, View } from 'react-native';
+import { View } from 'react-native';
 import { SafeAreaView } from 'react-navigation';
 import { SUITE } from '@suite-actions/constants';
-// import { H1, P } from '@trezor/components';
+import { H1, P } from '@trezor/components';
 import { AppState, Dispatch } from '@suite-types';
 import styles from '@suite-support/styles';
 
@@ -36,15 +36,15 @@ const Preloader = (props: Props) => {
     if (error) {
         return (
             <View>
-                <Text>Failed to load Trezor Suite</Text>
-                <Text>Ups, something went wrong. Details: {error}</Text>
+                <H1>Failed to load Trezor Suite</H1>
+                <P>Ups, something went wrong. Details: {error}</P>
             </View>
         );
     }
 
     return (
         <SafeAreaView style={styles.safeArea}>
-            {!loaded && <Text>Loading</Text>}
+            {!loaded && <H1>Loading</H1>}
             {loaded && props.children}
         </SafeAreaView>
     );
