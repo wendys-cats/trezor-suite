@@ -169,10 +169,8 @@ export class HttpReceiver extends EventEmitter {
     };
 
     private spendIframeHandler = (_request: Request, response: http.ServerResponse) => {
-        // eslint-disable-next-line no-useless-escape
-        const regexString = `^https:\/\/.+\.bitrefill\.com$`;
-        const template = this.applyTemplate(`
-            <!DOCTYPE html>
+        const regex = /^https:\/\/(.+\.|)bitrefill\.com$/;
+        const template = `<!DOCTYPE html>
                 <head>
                     <style>
                         body, html {
@@ -209,8 +207,7 @@ export class HttpReceiver extends EventEmitter {
                         const iframeSrc = urlParams.get('voucherSiteUrl');
                         const iframeUrl = new URL(urlParams.get('voucherSiteUrl'));
                         const origin = iframeUrl.origin;
-                        // eslint-disable-next-line no-useless-escape
-                        const regex = new RegExp('${regexString}');
+                        const regex = ${regex};
                         if(regex.test(origin)) {
                             const handleMessageEndpoint = urlParams.get('handleMessageEndpoint');
                             iframe.src = decodeURIComponent(iframeSrc);
@@ -220,8 +217,7 @@ export class HttpReceiver extends EventEmitter {
                         }
                     </script>
                 </body>
-            </html>
-            `);
+            </html>`;
         response.end(template);
     };
 
