@@ -22,17 +22,20 @@ const init = (window: BrowserWindow, store: LocalStore) => {
         window.webContents.send('update/skip', updateSettings.skipVersion);
     }
 
+    const setSkipVersion = (version: string) => {
+        updateSettings.skipVersion = version;
+        store.setUpdateSettings(updateSettings);
+    };
+
     autoUpdater.on('checking-for-update', () => {
         window.webContents.send('update/checking');
     });
 
     autoUpdater.on('update-available', ({ version, releaseDate }) => {
-        if (updateSettings.skipVersion === version) {
-            return;
-        }
+        const shouldSkip = updateSettings.skipVersion === version;
 
         latestVersion = { version, releaseDate, isManualCheck };
-        window.webContents.send('update/available', latestVersion);
+        window.webContents.send(`update/${shouldSkip ? 'skip' : 'available'}`, latestVersion);
 
         // Reset manual check flag
         isManualCheck = false;
@@ -61,6 +64,7 @@ const init = (window: BrowserWindow, store: LocalStore) => {
     ipcMain.on('update/check', (_, isManual?: boolean) => {
         if (isManual) {
             isManualCheck = true;
+            setSkipVersion('');
         }
 
         autoUpdater.checkForUpdates();
@@ -90,8 +94,7 @@ const init = (window: BrowserWindow, store: LocalStore) => {
     });
     ipcMain.on('update/skip', (_, version) => {
         window.webContents.send('update/skip', version);
-        updateSettings.skipVersion = version;
-        store.setUpdateSettings(updateSettings);
+        setSkipVersion(version);
     });
 };
 
