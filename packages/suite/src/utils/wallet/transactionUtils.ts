@@ -431,6 +431,23 @@ export const searchTransactions = (
         return transactions;
     }
 
+    // If it's an amount search (starting with < or > operator)
+    const amountOperator = ['<', '>'].find(k => search.startsWith(k));
+    if (amountOperator) {
+        const amount = new BigNumber(search.replace(amountOperator, ''));
+        switch (amountOperator) {
+            case '<':
+                return transactions.filter(t =>
+                    new BigNumber(t.amount).isLessThanOrEqualTo(amount),
+                );
+            case '>':
+                return transactions.filter(t =>
+                    new BigNumber(t.amount).isGreaterThanOrEqualTo(amount),
+                );
+            // no default
+        }
+    }
+
     const txsToSearch: string[] = [];
 
     // Find by output label
