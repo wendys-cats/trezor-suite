@@ -17,22 +17,57 @@ const useRbfState = (tx: WalletAccountTransaction, finalize: boolean) => {
 
     const { account, network } = state.selectedAccount;
     const coinFees = state.fees[account.symbol];
-    const levels = getFeeLevels(account.networkType, coinFees);
+    const origRate = parseInt(tx.rbfParams.feeRate, 10);
+
+    // increase FeeLevels for visual purpose (old rate + defined rate)
+    // it will be decreased in sendFormAction before composing
+    const levels = getFeeLevels(account.networkType, coinFees).map(l => ({
+        ...l,
+        feePerUnit: Number(parseInt(l.feePerUnit, 10) + origRate).toString(),
+    }));
+
+    // override Account data
+    const rbfAccount = {
+        ...account,
+        // use only utxo from original tx
+        utxo: tx.rbfParams.utxo,
+        // make sure that the exact same change output will be picked by trezor-connect > hd-wallet during the tx compose process
+        addresses: account.addresses
+            ? {
+                  ...account.addresses,
+                  change: [tx.rbfParams.changeAddress],
+              }
+            : undefined,
+    };
+
+    // transform original outputs
+    const outputs = tx.rbfParams.outputs.flatMap(o => {
+        if (o.type === 'change') return [];
+        return [
+            {
+                ...DEFAULT_PAYMENT,
+                address: o.address,
+                amount: o.formattedAmount,
+            },
+        ];
+    });
 
     return {
-        account,
-        utxo: tx.rbfParams.utxo, // use only utxo from original tx
+        account: rbfAccount,
         network,
-        feeInfo: { ...coinFees, levels },
+        feeInfo: {
+            ...coinFees,
+            levels,
+            minFee: origRate + coinFees.minFee, // increase required minFee rate
+        },
         formValues: {
             ...DEFAULT_VALUES,
-            outputs: tx.rbfParams.outputs.map(o => ({ ...DEFAULT_PAYMENT, ...o })), // use outputs from original tx
+            outputs,
             selectedFee: undefined,
             options: finalize ? ['broadcast'] : ['bitcoinRBF', 'broadcast'],
             feePerUnit: '',
             feeLimit: '',
-            baseFee: tx.rbfParams.baseFee,
-            prevTxid: tx.txid,
+            rbfParams: tx.rbfParams,
         } as FormState, // TODO: remove type casting (options string[])
     };
 };

@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
-import { AccountTransaction } from 'trezor-connect';
-import { Account, WalletAccountTransaction } from '@wallet-types';
+import { AccountTransaction, AccountAddress } from 'trezor-connect';
+import { Account, WalletAccountTransaction, RbfTransactionParams } from '@wallet-types';
 import { getDateWithTimeZone } from '../suite/date';
 import { toFiatCurrency } from './fiatConverterUtils';
 import { formatAmount, formatNetworkAmount } from './accountUtils';
@@ -267,7 +267,10 @@ export const isTxUnknown = (transaction: WalletAccountTransaction) => {
     );
 };
 
-const getRbfParams = (tx: AccountTransaction, account: Account) => {
+const getRbfParams = (
+    tx: AccountTransaction,
+    account: Account,
+): RbfTransactionParams | undefined => {
     if (account.networkType !== 'bitcoin') return;
     if (tx.type === 'recv' || !tx.rbf || !tx.details || !isPending(tx)) return; // ignore non rbf and mined transactions
     const { vin, vout } = tx.details;
@@ -293,20 +296,25 @@ const getRbfParams = (tx: AccountTransaction, account: Account) => {
             },
         ];
     });
-    // find all change outputs
-    const changeVout = vout.filter(output =>
-        changeAddresses.find(a => output.addresses?.includes(a.address)),
-    );
+    // find change address and output
+    let changeAddress: AccountAddress | undefined;
+    const outputs: RbfTransactionParams['outputs'] = [];
+    vout.forEach(output => {
+        const changeOutput = changeAddresses.find(a => output.addresses?.includes(a.address));
+        outputs.push({
+            type: changeOutput ? 'change' : 'payment',
+            address: output.addresses![0],
+            amount: output.value!,
+            formattedAmount: formatNetworkAmount(output.value!, account.symbol),
+        });
+        if (changeOutput) {
+            changeAddress = changeOutput;
+        }
+    });
+
     // no change output found, there is no possibility to bump fee
     // TODO: implement possibility to add another utxo (sign totally different transaction)
-    if (!changeVout.length) return;
-    // re-create external outputs
-    const outputs = vout
-        .filter(output => !changeVout.includes(output))
-        .map(output => ({
-            address: output.addresses![0],
-            amount: formatNetworkAmount(output.value!, account.symbol), // needs to be converted to be used in sedFormActions
-        }));
+    if (!changeAddress) return;
 
     // no external outputs (opreturn)
     if (!outputs.length) return;
@@ -319,8 +327,10 @@ const getRbfParams = (tx: AccountTransaction, account: Account) => {
 
     // TODO: get other params, like opreturn or locktime? change etc.
     return {
+        txid: tx.txid,
         utxo,
         outputs,
+        changeAddress,
         feeRate,
         baseFee: parseInt(tx.fee, 10),
     };

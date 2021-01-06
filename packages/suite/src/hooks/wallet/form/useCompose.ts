@@ -16,7 +16,6 @@ type Props = UseFormMethods<FormState> & {
     // TODO: params required by sendFormActions (not the whole UseSendFormState), refactor both in the next PR
     state?: {
         account: Account;
-        utxo?: Account['utxo'];
         network: Network;
         feeInfo: FeeInfo;
     };
