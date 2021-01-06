@@ -81,21 +81,28 @@ const ReviewTransaction = ({ selectedAccount, send, decision }: Props) => {
     const broadcastEnabled = precomposedForm.options.includes('broadcast');
 
     const outputs: OutputProps[] = [];
-    precomposedTx.transaction.outputs.forEach(o => {
-        if (typeof o.address === 'string') {
-            outputs.push({
-                type: 'regular',
-                label: o.address,
-                value: o.amount,
-                token: precomposedTx.token,
-            });
-        } else if (o.script_type === 'PAYTOOPRETURN') {
-            outputs.push({
-                type: 'opreturn',
-                value: o.op_return_data,
-            });
-        }
-    });
+    if (precomposedTx.prevTxid && !device.unavailableCapabilities?.replaceTransaction) {
+        outputs.push({
+            type: 'txid',
+            value: precomposedTx.prevTxid,
+        });
+    } else {
+        precomposedTx.transaction.outputs.forEach(o => {
+            if (typeof o.address === 'string') {
+                outputs.push({
+                    type: 'regular',
+                    label: o.address,
+                    value: o.amount,
+                    token: precomposedTx.token,
+                });
+            } else if (o.script_type === 'PAYTOOPRETURN') {
+                outputs.push({
+                    type: 'opreturn',
+                    value: o.op_return_data,
+                });
+            }
+        });
+    }
 
     if (precomposedForm.bitcoinLockTime) {
         outputs.push({ type: 'locktime', value: precomposedForm.bitcoinLockTime });
